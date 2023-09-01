@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-gray-900;
+}
+
+.card-border {
+    border: 1px solid #1f2937;
+    border-radius: 3px;
+}
+
+.container {
+@apply w-full max-w-[1920px] mx-auto px-0 xl:px-6;
+}
+
