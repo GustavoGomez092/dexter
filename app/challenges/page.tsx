@@ -17,7 +17,7 @@ export default function page() {
       </PerfectScrollbar>
       </div>
       <div className="right-area w-full h-auto lg:h-full lg:w-6/12 card-border">
-        <div className="editor-area h-96 lg:h-4/6 px-6 pt-6">
+        <div className="editor-area h-96 lg:h-4/6 px-6 pt-2 overflow-hidden">
         <CodeEditor />
         </div>
         <div className="console-area h-96 lg:h-2/6 px-6 py-2">
