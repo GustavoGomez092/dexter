@@ -9,7 +9,7 @@ export default function Header() {
         <img src="/assets/img/logo.svg" className="h-full py-6" alt="logo" />
       </div>
       <div className="header-center text-center">
-        <h1 className=" z-20 relative text-2xl font-bold text-gray-400">Welcome Gustavo Gomez</h1>
+        <h1 className=" z-20 relative text-2xl font-bold text-gray-400">Participant: Gustavo Gomez</h1>
         <p className="z-20 relative text-gray-400">Challenge: <span className="font-bold">01 / 03</span></p>
       </div>
       <div className="timer h-full flex items-center justify-between z-20 relative">
