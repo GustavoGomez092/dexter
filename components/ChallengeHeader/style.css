@@ -1,0 +1,6 @@
+.header {
+    background-size: 20px 20px;
+  background-image:
+    linear-gradient(to right, #1f2937 1px, transparent 1px),
+    linear-gradient(to bottom, #1f2937 1px, transparent 1px);
+}
