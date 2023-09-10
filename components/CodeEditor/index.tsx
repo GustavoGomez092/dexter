@@ -1,6 +1,7 @@
 'use client'
 
 import Editor from '@monaco-editor/react';
+import {Button} from "@nextui-org/react";
 
 const CodeEditor = () => {
 
@@ -21,7 +22,7 @@ var merge = function(nums1, m, nums2, n) {
     <>
     <div className="flex items-center justify-between mb-2">
       <p className="text-gray-500">JavaScript</p>
-      <button className="btn btn-outline btn-sm btn-primary">Test code</button>
+      <Button color="primary" variant="bordered">Test code</Button>
     </div>
     <Editor height="100%" defaultLanguage="javascript" options={{
     fontSize: 16,

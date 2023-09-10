@@ -1,16 +1,11 @@
+'use client'
+
 import './globals.css'
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import {NextUIProvider} from "@nextui-org/react";
 
-
-export const metadata: Metadata = {
-  title: 'Dexter - Code Challenges',
-  description: 'Code challenges for job applicants',
-}
 
 export default function RootLayout({
   children,
@@ -20,11 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="wrapper h-screen flex flex-col justify-between ">
-          <Header />
+        <main className="main light wrapper h-auto flex flex-col justify-between text-base-100">
+        <NextUIProvider>
           {children}
-          <Footer />
-          </div>
+          </NextUIProvider>
+          </main>
       </body>
     </html>
   )
