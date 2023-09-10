@@ -8,7 +8,7 @@ const httpsRedirect = () => {
     location.replace('https://' + location.href.split('//')[1]);
   };
   httpsRedirect();
-// Redirect from http://mydomain.com to https://mydomain.com
+// Redirect from http://dexter.com to https://dexter.com
 
 `,
 `
