@@ -15,3 +15,31 @@ body, :root {
 @apply w-full max-w-[1920px] mx-auto px-0 xl:px-6;
 }
 
+.header {
+    background-size: 20px 20px;
+    background-image:
+    linear-gradient(to right, #1f2937 1px, transparent 1px),
+    linear-gradient(to bottom, #1f2937 1px, transparent 1px);
+}
+
+.rotation-animation {
+    animation: rotate 15s linear infinite;
+}
+.counter-rotation-animation {
+    animation: rotate 5s linear infinite;
+    animation-direction: reverse;
+}
+
+.delayed-counter-rotation-animation {
+    animation: rotate 10s linear infinite;
+    animation-direction: reverse;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(360deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
