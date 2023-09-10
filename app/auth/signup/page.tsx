@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import {Button, Code, Input} from "@nextui-org/react";
 import PasswordInput from "../../../components/PasswordInput"
 import randomSnippetGenerator from "../../../hooks/randomSnippetGenerator"
@@ -83,6 +84,9 @@ export default function page() {
                           </span>
                       </Button>
                       <p className="mt-6 text-xs text-gray-600 text-center">
+                        Already a user? <Link className='underline' href="/auth/">Sign In</Link>
+                        </p>
+                      <p className="text-xs text-gray-600 text-center">
                           I agree to abide by Dexter's <a href="#" className="border-b border-gray-500 border-dotted">Terms of Service</a> and its <a href="#" className="border-b border-gray-500 border-dotted">Privacy Policy</a></p>
                     </div>
                 </div>

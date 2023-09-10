@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import {Button, Code, Input} from "@nextui-org/react";
 import PasswordInput from "../../../components/PasswordInput"
 import randomSnippetGenerator from "../../../hooks/randomSnippetGenerator"
@@ -68,21 +69,24 @@ export default function page() {
                         </div>
                     </div>
                     <div className="mx-auto max-w-xs flex flex-col gap-y-2">
-                      <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered"  />
-                      <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" />
-                      <Button color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14">
-                          <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
-                              strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                              <circle cx="8.5" cy="7" r="4" />
-                              <path d="M20 8v6M23 11h-6" />
-                          </svg>
-                          <span className="ml-3">
-                              Sign In
-                          </span>
-                      </Button>
-                      <p className="mt-6 text-xs text-gray-600 text-center">
-                      ⓒ Dexter. All Rights Reserved
+                    <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered"  />
+                    <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" />
+                    <Button color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14">
+                        <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
+                            strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="8.5" cy="7" r="4" />
+                            <path d="M20 8v6M23 11h-6" />
+                        </svg>
+                        <span className="ml-3">
+                            Sign In
+                        </span>
+                    </Button>
+                    <p className="mt-6 text-xs text-gray-600 text-center">
+                    Not a user yet? <Link className='underline' href="/auth/signup">Sign Up</Link>
+                    </p>
+                    <p className="text-xs text-gray-600 text-center">
+                    ⓒ Dexter. All Rights Reserved
                     </p>
                     </div>
                 </div>
