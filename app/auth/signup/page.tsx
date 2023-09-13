@@ -69,25 +69,25 @@ export default function page() {
                         </div>
                     </div>
                     <div className="mx-auto max-w-xs flex flex-col gap-y-2">
-                      <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered"  />
-                      <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" />
-                      <PasswordInput type="password" isRequired label="Confirm your Password" placeholder="Enter your password" color="primary" variant="bordered" className="mb-2" />
-                      <Button color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14">
-                          <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
-                              strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                              <circle cx="8.5" cy="7" r="4" />
-                              <path d="M20 8v6M23 11h-6" />
-                          </svg>
-                          <span className="ml-3">
-                              Sign Up
-                          </span>
-                      </Button>
-                      <p className="mt-6 text-xs text-gray-600 text-center">
+                    <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered"  />
+                    <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" />
+                    <PasswordInput type="password" isRequired label="repeat-password" placeholder="Confirm your Password" color="primary" variant="bordered" className="mb-2" />
+                    <Button color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14">
+                        <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
+                            strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                            <circle cx="8.5" cy="7" r="4" />
+                            <path d="M20 8v6M23 11h-6" />
+                        </svg>
+                        <span className="ml-3">
+                            Sign Up
+                        </span>
+                    </Button>
+                    <p className="mt-6 text-xs text-gray-600 text-center">
                         Already a user? <Link className='underline' href="/auth/">Sign In</Link>
                         </p>
-                      <p className="text-xs text-gray-600 text-center">
-                          I agree to abide by Dexter's <a href="#" className="border-b border-gray-500 border-dotted">Terms of Service</a> and its <a href="#" className="border-b border-gray-500 border-dotted">Privacy Policy</a></p>
+                    <p className="text-xs text-gray-600 text-center">
+                        I agree to abide by Dexter's <a href="#" className="border-b border-gray-500 border-dotted">Terms of Service</a> and its <a href="#" className="border-b border-gray-500 border-dotted">Privacy Policy</a></p>
                     </div>
                 </div>
             </div>
