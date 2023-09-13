@@ -2,8 +2,8 @@ import CountDown from '@/components/CountDown'
 import './style.css'
 export default function ChallengeHeader() {
   return (
-    <div className='header h-24 container mx-auto relative flex justify-between items-center'>
-      <div className="header-bg">
+    <div className='h-[250px] lg:h-[96px] container mx-auto relative flex flex-col lg:flex-row justify-between items-center overflow-hidden !px-6'>
+      <div className="header-bg absolute w-full h-full">
       <div className="absolute left-0 w-full h-full bg-gradient-to-b from-gray-900/0 to-gray-900/100" />
       <div className="absolute overflow-hidden h-full w-full top-0 left-0 z-0">
         <div className="absolute left-0 w-full h-full bg-gradient-radial from-gray-900/0 to-gray-900/100 z-20" />
@@ -26,7 +26,7 @@ export default function ChallengeHeader() {
         </div>
       </div>
       <div className="logo-area h-full z-20 relative w-fit">
-        <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl left-12 top-10 opacity-40" />
+        <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl left-12 top-7 opacity-40" />
         <img src="/assets/img/logo.svg" className="h-full py-6" alt="logo" />
       </div>
       <div className="header-center text-center">
