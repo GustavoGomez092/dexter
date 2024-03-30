@@ -1,17 +1,75 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import {Button, Code, Input} from "@nextui-org/react";
-import PasswordInput from "../../../components/PasswordInput"
-import randomSnippetGenerator from "../../../hooks/randomSnippetGenerator"
+import {Button, Code, Input, Spinner} from "@nextui-org/react";
+import PasswordInput from "@/components/PasswordInput"
+import randomSnippetGenerator from "@/hooks/userRandomSnippetGenerator"
+import { User, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from '@/providers/firebase';
+import { authStore } from '@/store/authStore';
+import { z } from "zod";
+import { useRouter } from 'next/navigation';
+
 export default function page() {
+
   const [snippet, setSnippet] = useState('')
   const {getRandomSnippet} = randomSnippetGenerator()
-
+  const login = authStore((state)=> state.logIn)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
 
   useEffect(() => {
     setSnippet(getRandomSnippet())
   }, [])
+
+
+  const checkCreds = () => {
+    const emailSchema = z.string().email()
+    const passwordSchema = z.string().min(6)
+    try {
+      emailSchema.safeParse(email)
+      passwordSchema.safeParse(password)
+    } catch (error) {
+      setError('There was an error signing in, try again later.')
+    }
+  }
+
+
+
+const signInUserPass = async () => {
+    try {
+    setLoading(true)
+    checkCreds()
+    const user = await signInWithEmailAndPassword(auth, email, password)
+    login(user as unknown as User)
+    setLoading(false)
+    router.push('/admin/challenges')
+    setError('')
+    } catch (error) {
+      setLoading(false)
+      setError('There was an error signing in, try again later.')
+    }
+}
+
+const signInGoogle = async () => {
+  try {
+    setLoading(true)
+    const provider = new GoogleAuthProvider();
+    const signIn = await signInWithPopup(auth, provider)
+    login(signIn.user as unknown as User)
+    setLoading(false)
+    router.push('/admin/challenges')
+    setError('')
+  } catch (error) {
+    setLoading(false)
+    setError('There was an error signing in, try again later.')
+  }
+}
+
+
 
   return (
 <div className="dark min-h-screen text-text flex justify-center">
@@ -23,12 +81,15 @@ export default function page() {
                     className="w-6/12 mx-auto" />
             </div>
             <div className="mt-12 flex flex-col items-center">
+                <p className="">
+                    Welcome interviewer
+                </p>
                 <h1 className="text-2xl xl:text-3xl font-extrabold">
-                    Sign up
+                    Sign-in
                 </h1>
                 <div className="w-full flex-1 mt-8">
                     <div className="flex flex-col items-center gap-y-2">
-                    <Button color="primary" className="w-full max-w-xs h-fit p-2 scale-100 hover:scale-[102%]" variant="bordered">
+                    <Button onClick={() => signInGoogle()} color="primary" className="w-full max-w-xs h-fit p-2 scale-100 hover:scale-[102%]" variant="bordered">
                         <div className="bg-white p-2 rounded-full">
                             <svg className="w-4" viewBox="0 0 533.5 544.3">
                                 <path
@@ -46,18 +107,7 @@ export default function page() {
                             </svg>
                         </div>
                         <span className="ml-4">
-                            Sign Up with Google
-                        </span>
-                    </Button>
-                    <Button color="primary" className="w-full max-w-xs h-fit p-2 scale-100 hover:scale-[102%]" variant="bordered">
-                        <div className="bg-white p-1 rounded-full">
-                            <svg className="w-6" viewBox="0 0 32 32">
-                                <path fillRule="evenodd"
-                                    d="M16 4C9.371 4 4 9.371 4 16c0 5.3 3.438 9.8 8.207 11.387.602.11.82-.258.82-.578 0-.286-.011-1.04-.015-2.04-3.34.723-4.043-1.609-4.043-1.609-.547-1.387-1.332-1.758-1.332-1.758-1.09-.742.082-.726.082-.726 1.203.086 1.836 1.234 1.836 1.234 1.07 1.836 2.808 1.305 3.492 1 .11-.777.422-1.305.762-1.605-2.664-.301-5.465-1.332-5.465-5.93 0-1.313.469-2.383 1.234-3.223-.121-.3-.535-1.523.117-3.175 0 0 1.008-.32 3.301 1.23A11.487 11.487 0 0116 9.805c1.02.004 2.047.136 3.004.402 2.293-1.55 3.297-1.23 3.297-1.23.656 1.652.246 2.875.12 3.175.77.84 1.231 1.91 1.231 3.223 0 4.61-2.804 5.621-5.476 5.922.43.367.812 1.101.812 2.219 0 1.605-.011 2.898-.011 3.293 0 .32.214.695.824.578C24.566 25.797 28 21.3 28 16c0-6.629-5.371-12-12-12z" />
-                            </svg>
-                        </div>
-                        <span className="ml-4">
-                            Sign Up with GitHub
+                            Sign In with Google
                         </span>
                     </Button>
                     </div>
@@ -65,29 +115,41 @@ export default function page() {
                     <div className="my-12 border-t border-primary text-center">
                         <div
                             className="leading-none px-2 inline-block text-sm text-text transform translate-y-1/2">
-                            Or sign up with e-mail
+                            Or sign In with e-mail
                         </div>
                     </div>
                     <div className="mx-auto max-w-xs flex flex-col gap-y-2">
-                    <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered"  />
-                    <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" />
-                    <PasswordInput type="password" isRequired label="repeat-password" placeholder="Confirm your Password" color="primary" variant="bordered" className="mb-2" />
-                    <Button color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14">
+                    <Input type="email" isRequired label="Email" placeholder="Enter your email" color="primary" variant="bordered" isInvalid={error ? true : false} value={email || ''} onChange={(e:React.ChangeEvent<HTMLInputElement>)=> setEmail(e.target.value)} />
+                    <PasswordInput type="password" isRequired label="Password" placeholder="Enter your password" color="primary" variant="bordered" isInvalid={error ? true : false} value={password || ''} onChange={(e:React.ChangeEvent<HTMLInputElement> )=> setPassword(e.target.value)} />
+                    <Button disabled={loading} color='primary' variant='shadow' className="scale-100 hover:scale-[102%] h-14" onClick={() => signInUserPass()}>
                         <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2"
                             strokeLinecap="round" strokeLinejoin="round">
                             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
                             <circle cx="8.5" cy="7" r="4" />
                             <path d="M20 8v6M23 11h-6" />
                         </svg>
-                        <span className="ml-3">
-                            Sign Up
-                        </span>
+                        {
+                          loading
+                          ? <span className="ml-2"><Spinner color='white' /></span>
+                          :  <span className="ml-3">Sign In</span>
+                        }
                     </Button>
+                    
+                        {
+                        error && 
+                          <div className="alert border border-[#F31260] p-4 rounded-md mt-2">
+                            <p className="text-[#F31260] text-xs">{error}</p>
+                          </div>
+                        }
                     <p className="mt-6 text-xs text-gray-600 text-center">
-                        Already a user? <Link className='underline' href="/auth/">Sign In</Link>
-                        </p>
+                    Not a user yet? <Link className='underline' href="mailto:gustavogomez092@gmail.com">contact the admin</Link>
+                    </p>
                     <p className="text-xs text-gray-600 text-center">
-                        I agree to abide by Dexter's <a href="#" className="border-b border-gray-500 border-dotted">Terms of Service</a> and its <a href="#" className="border-b border-gray-500 border-dotted">Privacy Policy</a></p>
+                    Are you a candidate? <Link className='underline' href="/auth/invite">Login here</Link>
+                    </p>
+                    <p className="text-xs text-gray-600 text-center">
+                    ⓒ Dexter. All Rights Reserved
+                    </p>
                     </div>
                 </div>
             </div>
@@ -131,5 +193,5 @@ export default function page() {
         </div>
     </div>
 </div>
-  )
+)
 }

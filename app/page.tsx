@@ -1,13 +1,18 @@
+'use client'
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import { Spinner } from "@nextui-org/react"
+import { useAuthVerifier } from "@/hooks/useAuthVerifier"
 
 export default function Home() {
+
+  useAuthVerifier()
+
   return (
-    <main className="flex flex-col items-center">
+    <main className="flex flex-col items-center bg-gray-900 dark h-screen w-screen justify-between">
       <Header />
       <div className="container flex flex-col items-center justify-center gap-4">
-        <h1 className="text-4xl font-bold text-center">Welcome to Dexter</h1>
-        <p className="text-xl text-center">A code challenge platform for job applicants</p>
+        <Spinner size="lg" />
       </div>
       <Footer />
     </main>
