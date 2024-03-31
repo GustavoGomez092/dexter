@@ -14,5 +14,6 @@ export const authStore = create<AuthStoreType>((set) => ({
     set(() => {
       return { user: {} as User, isLogged: false, loading: false }
     })},
+  setUser: (userData: User) => set(() => ({ user: userData })),
   setLoading: (loading: boolean) => set(() => ({ loading })),
 }))

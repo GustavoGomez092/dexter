@@ -8,18 +8,18 @@ export const useAuthVerifier = () => {
   const router = useRouter()
   const loading = authStore((state)=> state.loading)
   const setLoading = authStore((state)=> state.setLoading)
+  const setUser = authStore((state)=> state.setUser)
   const logIn = authStore((state)=> state.logIn)
 
   useEffect(()=>{
     setLoading(true)
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        logIn(user)
-        router.push('/admin/challenges')
-        setLoading(false)
+        setUser(user)
+        setTimeout(() => setLoading(false), 1000)
       } else {
         router.push('/auth/signin')
-        setLoading(false)
+        setTimeout(() => setLoading(false), 1000)
       }
     });
   }, [])

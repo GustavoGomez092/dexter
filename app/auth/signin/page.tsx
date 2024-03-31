@@ -30,10 +30,19 @@ export default function page() {
     const emailSchema = z.string().email()
     const passwordSchema = z.string().min(6)
     try {
-      emailSchema.safeParse(email)
-      passwordSchema.safeParse(password)
+      const emailCheck = emailSchema.safeParse(email)
+      const passwordCheck = passwordSchema.safeParse(password)
+
+      if (!emailCheck.success) {
+        throw new Error()
+      }
+
+      if (!passwordCheck.success) {
+        throw new Error()
+      }
+
     } catch (error) {
-      setError('There was an error signing in, try again later.')
+      throw new Error('Invalid credentials, please check your email and password.')
     }
   }
 
@@ -134,7 +143,6 @@ const signInGoogle = async () => {
                           :  <span className="ml-3">Sign In</span>
                         }
                     </Button>
-                    
                         {
                         error && 
                           <div className="alert border border-[#F31260] p-4 rounded-md mt-2">

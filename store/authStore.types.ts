@@ -6,5 +6,6 @@ export type AuthStoreType = {
   loading: boolean,
   logIn: (user:User) => void,
   logOut: () => void,
+  setUser: (user:User) => void,
   setLoading: (loading:boolean) => void,
 }

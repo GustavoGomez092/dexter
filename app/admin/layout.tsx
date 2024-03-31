@@ -19,7 +19,7 @@ export default function RootLayout({
   const { loading } = useAuthVerifier()
 
   return (
-        <div className="challenge wrapper h-screen flex flex-col justify-between bg-gray-900 dark">
+        <div className="challenge wrapper min-h-screen flex flex-col justify-between bg-gray-900 dark">
           <Header />
           {
             loading 

@@ -1,17 +1,74 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import { Button, Code, Input } from "@nextui-org/react"
+import { Button, Code, Input, Spinner } from "@nextui-org/react"
 import randomSnippetGenerator from "../../../hooks/userRandomSnippetGenerator"
-import { useCandidateAuthVerifier } from "@/hooks/useCandidateAuthVerifier"
+import { useRouter } from "next/navigation"
+import { z } from "zod";
+import { applicantStore } from "@/store/applicantStore"
 
 export default function page() {
+ 
   const [snippet, setSnippet] = useState("")
   const { getRandomSnippet } = randomSnippetGenerator()
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
+  const [inviteCode, setInviteCode] = useState("")
+  const [nameError, setNameError] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const [inviteCodeError, setInviteCodeError] = useState(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const applicantLogin = applicantStore((state) => state.logIn)
 
   useEffect(() => {
     setSnippet(getRandomSnippet())
   }, [])
+
+  const checkCreds = async () => {
+    const emailSchema = z.string().email()
+    const nameSchema = z.string().min(3)
+    const inviteCodeSchema = z.string().min(10).max(10)
+    const emailEval = await emailSchema.safeParseAsync(email)
+    const nameEval = await nameSchema.safeParseAsync(name)
+    const inviteCodeEval = await inviteCodeSchema.safeParseAsync(inviteCode)
+
+    if (!emailEval.success) {
+      setEmailError(true)
+      throw new Error()
+    } else {
+      setEmailError(false)
+    }
+
+    if (!nameEval.success) {
+      setNameError(true)
+      throw new Error()
+    } else {
+      setNameError(false)
+    }
+
+    if (!inviteCodeEval.success) {
+      setInviteCodeError(true)
+      throw new Error()
+    } else {
+      setInviteCodeError(false)
+    }
+  }
+
+  const signInCandidate = async () => {
+    try {
+      setLoading(true)
+      await checkCreds()
+      applicantLogin({name, email, inviteId: inviteCode, loading: false})
+      setLoading(false)
+      router.push("/candidate/waiting-room")
+    } catch (error) {
+      setLoading(false)
+      setError("Invalid credentials, please check your email, name and invite code.")
+      console.log(error)
+    }
+  }
 
 
   return (
@@ -38,6 +95,9 @@ export default function page() {
                   placeholder="Enter your email"
                   color="primary"
                   variant="bordered"
+                  isInvalid={emailError}
+                  value={email|| ""}
+                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 />
                 <Input
                   type="text"
@@ -47,6 +107,9 @@ export default function page() {
                   color="primary"
                   variant="bordered"
                   className="mb-2"
+                  isInvalid={nameError}
+                  value={name|| ""}
+                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                 />
                 <Input
                   type="text"
@@ -56,11 +119,15 @@ export default function page() {
                   color="primary"
                   variant="bordered"
                   className="mb-2"
+                  isInvalid={inviteCodeError}
+                  value={inviteCode||""}
+                  onChange={(e) => setInviteCode(e.target.value)}
                 />
                 <Button
                   color="primary"
                   variant="shadow"
                   className="scale-100 hover:scale-[102%] h-14"
+                  onClick={() => signInCandidate()}
                 >
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24">
                     <path
@@ -71,8 +138,18 @@ export default function page() {
                       d="M11 6h10m-10 6h10m-10 6h10M3 11.945 4.538 13.5 8 10M3 5.944 4.538 7.5 8 4M4.5 18h.01M5 18a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
                     />
                   </svg>
-                  <span className="ml-3">Start Test</span>
+                  {
+                    loading
+                    ? <span className="ml-2"><Spinner color='white' /></span>
+                    :  <span className="ml-3">Start Test</span>
+                  }
                 </Button>
+                {
+                  error && 
+                    <div className="alert border border-[#F31260] p-4 rounded-md mt-2">
+                      <p className="text-[#F31260] text-xs">{error}</p>
+                    </div>
+                }
                 <p className="mt-6 text-xs text-gray-600 text-center">
                   Are you an Interviewer?{" "}
                   <Link className="underline" href="/auth/signin">
