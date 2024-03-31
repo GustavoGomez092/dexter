@@ -9,7 +9,6 @@ export const useAuthVerifier = () => {
   const loading = authStore((state)=> state.loading)
   const setLoading = authStore((state)=> state.setLoading)
   const setUser = authStore((state)=> state.setUser)
-  const logIn = authStore((state)=> state.logIn)
 
   useEffect(()=>{
     setLoading(true)

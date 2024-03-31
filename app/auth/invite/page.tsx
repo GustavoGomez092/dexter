@@ -6,6 +6,8 @@ import randomSnippetGenerator from "../../../hooks/userRandomSnippetGenerator"
 import { useRouter } from "next/navigation"
 import { z } from "zod";
 import { applicantStore } from "@/store/applicantStore"
+import { auth } from "@/providers/firebase"
+import { signInAnonymously } from "firebase/auth"
 
 export default function page() {
  
@@ -61,11 +63,20 @@ export default function page() {
       setLoading(true)
       await checkCreds()
       applicantLogin({name, email, inviteId: inviteCode, loading: false})
+      await anonymusLogin()
       setLoading(false)
       router.push("/candidate/waiting-room")
     } catch (error) {
       setLoading(false)
       setError("Invalid credentials, please check your email, name and invite code.")
+      console.log(error)
+    }
+  }
+
+  const anonymusLogin = async () => {
+    try {
+      await signInAnonymously(auth)
+    } catch (error) {
       console.log(error)
     }
   }
