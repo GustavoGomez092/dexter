@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Card, CardBody} from "@nextui-org/react";
 import allTests from "@/tests";
+import { DocumentData, doc, onSnapshot } from "firebase/firestore";
+import db from "@/providers/firebase";
 
 export enum Correct {
   YES = 'yes',
@@ -10,39 +12,56 @@ export enum Correct {
 
 type props = {
   index: number;
+  challengeId: string|null;
   questionId: string;
-  answer: string;
-  correct: Correct;
 }
 
-const AdminQuestion = ({questionId, answer, correct, index}: props) => {
+const AdminQuestion = ({questionId, index, challengeId}: props) => {
+  
   const getQuestionById = (id: string) => {
     return allTests.map(test => test.tests).flat().map(t => t.questions).flat().find(q => q.id === id);
   }
+
   const question = getQuestionById(questionId);
+  const [answer, setAnswer] = useState<DocumentData>({})
 
   const isCorrect = () => {
-    switch (correct) {
+    if (!answer) return '';
+    if (!answer?.correct) return '';
+    switch (answer?.correct) {
       case Correct.YES:
         return 'bg-green-950';
       case Correct.NO:
         return 'bg-red-950';
       case Correct.CHECK:
         return 'bg-yellow-950';
+      default:
+        return '';
     }
   }
+
+  const AnwswersChangedListener = (challengeId: string, questionId:string) => {
+    onSnapshot(doc(db, "Challenge", challengeId, 'Answers', questionId), (doc: DocumentData) => {
+      const collectionData = doc.data()
+      setAnswer(collectionData)
+    })
+  }
+
+  useEffect(() => {
+    if (challengeId) AnwswersChangedListener(challengeId, questionId)
+  }, [challengeId]);
 
   return (
     <Card className={isCorrect()}>
       <CardBody>
         <div className="flex flex-row">
           <div className="flex flex-col w-10/12">
-            <p className="text-sm">Question: {index + 1}</p>
+            <p className="text-sm">Question: {index + 1} {answer?.correct === Correct.CHECK ? '(Requires input)' : answer?.correct === Correct.NO ? '(Failed)' : '(Passed)'}</p>
             <p className="font-bold text-lg mb-2">{question?.question.text}</p>
           </div>
           {
-            correct === Correct.CHECK &&
-            <div className="flex flex-row w-2/12 gap-x-2">
+            answer?.correct === Correct.CHECK &&
+            <div className="flex flex-row w-2/12 gap-x-2 justify-end">
               <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white pt-1 hover:scale-105 cursor-pointer transition-all duration-500 hover:shadow-xl">
                 <svg width={24} height={24} className="fill-primary scale-50">
                   <path d="M20.285 2 9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z" />
@@ -56,7 +75,7 @@ const AdminQuestion = ({questionId, answer, correct, index}: props) => {
             </div>
           }
         </div>
-        <p className="mb-2">{answer}</p>
+        <p className="mb-2">{answer?.answer}</p>
       </CardBody>
     </Card>
   );

@@ -2,16 +2,37 @@
 
 import useUUID from "@/hooks/useUUID"
 import db from "@/providers/firebase"
-import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore"
+import { DocumentData, collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import allTests from "@/tests"
 import { Chip, Snippet } from "@nextui-org/react"
-import AdminQuestion, { Correct } from "@/components/AdminQuestion"
+import AdminQuestion from "@/components/AdminQuestion"
+import { challengeStore } from "@/store/challengeStore"
 
 export default function Page({ params }: { params: { slug: string } }) {
   const { getShortUUID } = useUUID()
+  const savedChallengeId = challengeStore((state: any) => state.challengeInviteId)
+  const persistChallengeId = challengeStore((state: any) => state.setChallengeInviteId)
   const [challengeId, setChallengeId] = useState<string | null>(null)
   const [started, setStarted] = useState(false)
+  const [answers, setAnswers] = useState<DocumentData[]>([])
+
+  const getAnswersListener = async (challengeId: string) => {
+    onSnapshot(
+      query(
+        collection(
+          db, "Challenge", challengeId, "Answers"
+        )
+      ), (querySnapshot) => {
+      const newAnswers:DocumentData[] = []
+      querySnapshot.forEach((doc) => {
+        console.log(doc.data())
+        newAnswers.push({ id: doc.id, data: doc.data() })
+      });
+      setAnswers(newAnswers)
+    });
+  }
+
 
   const getTestById = (id: string) => {
     return allTests
@@ -36,12 +57,23 @@ export default function Page({ params }: { params: { slug: string } }) {
       started: false,
     })
 
+    await setDoc(doc(db, "Challenge", path, 'Answers', 'JS_inter_001_001'), {
+      answer: "A closure is a function having access to the parent scope, even after the parent function has closed.",
+      question: 'What is a Closure in JavaScript?',
+      correct: 'no',
+    })
+
     ChallengeStartedListener(path)
+    getAnswersListener(path)
   }
 
   useEffect(() => {
-    if (!challengeId) {
-      setChallengeId(getShortUUID())
+    if (!savedChallengeId) {
+      const id = getShortUUID()
+      setChallengeId(id)
+      persistChallengeId(id)
+    } else {
+      setChallengeId(savedChallengeId)
     }
   }, [])
 
@@ -50,6 +82,8 @@ export default function Page({ params }: { params: { slug: string } }) {
       createChallenge(challengeId)
     }
   }, [challengeId])
+
+
 
   return (
     <main className="flex min-h-[80vh] flex-col items-center justify-between py-6">
@@ -71,12 +105,19 @@ export default function Page({ params }: { params: { slug: string } }) {
           <div className="flex flex-row gap-x-16">
             <div className="flex flex-col gap-4 w-full lg:w-1/2">
               <h2 className="text-xl text-text font-bold">Real-time test</h2>
-              <AdminQuestion
-                index={0}
-                questionId="JS_inter_001_001"
-                answer="Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis."
-                correct={Correct.CHECK}
-              />
+              {
+                answers && answers.map((answer: DocumentData, index: number) => {
+                  console.log(answers)
+                  return (                  
+                    <AdminQuestion
+                      key={`admin-question-${index}`}
+                      index={index}
+                      challengeId={challengeId}
+                      questionId={answer.id}
+                    />
+                  )
+                })
+              }
             </div>
             <div className="flex flex-col gap-4 w-full lg:w-1/2">
               <h2 className="text-xl text-text font-bold">Insights</h2>
