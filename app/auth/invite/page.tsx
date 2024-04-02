@@ -6,8 +6,9 @@ import randomSnippetGenerator from "../../../hooks/userRandomSnippetGenerator"
 import { useRouter } from "next/navigation"
 import { z } from "zod";
 import { applicantStore } from "@/store/applicantStore"
-import { auth } from "@/providers/firebase"
+import db, { auth } from "@/providers/firebase"
 import { signInAnonymously } from "firebase/auth"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 
 export default function page() {
  
@@ -63,14 +64,40 @@ export default function page() {
       setLoading(true)
       await checkCreds()
       applicantLogin({name, email, inviteId: inviteCode, loading: false})
+      await checkValidInviteCode()
       await anonymusLogin()
+      await setUserData()
       setLoading(false)
-      router.push("/candidate/waiting-room")
+      router.push(`/candidate/challenge/${inviteCode}/introduction`)
     } catch (error) {
       setLoading(false)
       setError("Invalid credentials, please check your email, name and invite code.")
       console.log(error)
     }
+  }
+
+  const checkValidInviteCode = async () => {
+    const challenge = doc(db, "Challenge", inviteCode);
+    const docSnap = await getDoc(challenge);
+    
+    if (docSnap.exists()) {
+      setInviteCodeError(false)
+      setError("")
+      return true
+    } else {
+      setInviteCodeError(true)
+      throw new Error("Invalid invite code")
+    }
+  }
+
+  const setUserData = async () => {
+    console.log('this area')
+    const document = doc(db, "Challenge", inviteCode);
+    await updateDoc(document, {
+      name: name,
+      email: email,
+      started: true
+    });
   }
 
   const anonymusLogin = async () => {

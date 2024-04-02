@@ -4,7 +4,7 @@ import "github-markdown-css"
 import "./style.css"
 export default function ChallengePrompter() {
   return (
-    <div className="markdown-body p-6">
+    <div className="markdown-body p-6 h-full">
       <h1>Merge Sorted Array</h1>
       <div className="xFUwe" data-track-load="description_content">
         <p>

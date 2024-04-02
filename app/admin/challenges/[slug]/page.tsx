@@ -86,7 +86,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
 
   return (
-    <main className="flex min-h-[80vh] flex-col items-center justify-between py-6">
+    <main className="flex h-full flex-col items-center justify-between py-6">
       <div className="container flex-row lg:flex h-full gap-2">
         <div className="container flex flex-col gap-4">
           <div className="top-area flex flex-col max-w-[450px] mb-16">

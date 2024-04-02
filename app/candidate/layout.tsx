@@ -20,16 +20,14 @@ export default function RootLayout({
   const { loading } = useCandidateAuthVerifier()
 
   return (
-        <div className="challenge wrapper h-screen flex flex-col justify-between bg-gray-900 dark">
-          <Header />
+        <>
           {
             loading 
-            ? <div className="container flex flex-col items-center justify-center gap-4">
+            ? <div className="container flex flex-col items-center justify-center gap-4 h-screen w-screen bg-neutral">
                 <Spinner size="lg" />
               </div>
             : children
           }
-          <Footer />
-          </div>
+          </>
   )
 }

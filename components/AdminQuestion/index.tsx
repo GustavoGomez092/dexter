@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {Card, CardBody} from "@nextui-org/react";
 import allTests from "@/tests";
-import { DocumentData, doc, onSnapshot } from "firebase/firestore";
+import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import db from "@/providers/firebase";
 
 export enum Correct {
@@ -51,6 +51,14 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
     if (challengeId) AnwswersChangedListener(challengeId, questionId)
   }, [challengeId]);
 
+  const updateQuestion = async (correct: string) => {
+    if (!challengeId) return;
+      await setDoc(doc(db, "Challenge", challengeId, 'Answers', questionId), {
+        correct: correct,
+        answer: answer?.answer,
+      })
+  }
+
   return (
     <Card className={isCorrect()}>
       <CardBody>
@@ -62,12 +70,12 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
           {
             answer?.correct === Correct.CHECK &&
             <div className="flex flex-row w-2/12 gap-x-2 justify-end">
-              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white pt-1 hover:scale-105 cursor-pointer transition-all duration-500 hover:shadow-xl">
+              <div onClick={() => updateQuestion('yes')} className="h-8 w-8 flex items-center justify-center rounded-full bg-white pt-1 hover:scale-105 cursor-pointer transition-all duration-500 hover:shadow-xl">
                 <svg width={24} height={24} className="fill-primary scale-50">
                   <path d="M20.285 2 9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z" />
                 </svg>
               </div>
-              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white hover:scale-105 cursor-pointer transition-all duration-500 hover:shadow-xl">
+              <div onClick={() => updateQuestion('no')} className="h-8 w-8 flex items-center justify-center rounded-full bg-white hover:scale-105 cursor-pointer transition-all duration-500 hover:shadow-xl">
                 <svg width={24} height={24} className="fill-danger scale-50">
                   <path d="m23 20.168-8.185-8.187L23 3.807 20.168 1l-8.182 8.179L3.81 1 1 3.81l8.186 8.196L1 20.19 3.81 23l8.203-8.192L20.193 23z" />
                 </svg>
