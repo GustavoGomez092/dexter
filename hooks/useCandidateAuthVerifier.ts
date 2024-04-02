@@ -1,14 +1,14 @@
 import { useRouter } from 'next/navigation';
-import { ApplicantStoreType } from './../store/applicantStore.type';
 import { applicantStore } from '@/store/applicantStore';
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/providers/firebase';
 
+
 export const useCandidateAuthVerifier = () => {
   const router = useRouter()
-  const loading = applicantStore((state:ApplicantStoreType)=> state.loading);
-  const setLoading = applicantStore((state:ApplicantStoreType)=> state.setLoading);
+  const loading = applicantStore((state)=> state.loading);
+  const setLoading = applicantStore((state)=> state.setLoading);
 
   
   useEffect(()=>{

@@ -5,7 +5,7 @@ import { signOut } from 'firebase/auth'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 
-export const applicantStore = create(
+export const applicantStore = create<ApplicantStoreType>()(
   persist(
     (set, get):ApplicantStoreType => ({
       name: '',
