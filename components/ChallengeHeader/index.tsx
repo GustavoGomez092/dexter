@@ -4,9 +4,8 @@ import './style.css'
 export default function ChallengeHeader() {
 
   const name = applicantStore((state: any) => state.name)
-
-  const current = 1
-  const total = 10
+  const currentQuestion = applicantStore((state: any) => state.currentQuestion)
+  const totalQuestions = applicantStore((state: any) => state.totalQuestions)
 
   return (
     <div className='min-h-[250px] lg:min-h-[96px] container mx-auto relative flex flex-col lg:flex-row justify-between items-center overflow-hidden !px-6'>
@@ -38,7 +37,7 @@ export default function ChallengeHeader() {
       </div>
       <div className="header-center text-center h-full lg:w-6/12">
         <h1 className=" z-20 relative text-2xl font-bold text-gray-400">Participant: {name}</h1>
-        <p className="z-20 relative text-gray-400">Challenge: <span className="font-bold">{current} / {total}</span></p>
+        <p className="z-20 relative text-gray-400">Challenge: <span className="font-bold">{currentQuestion} / {totalQuestions}</span></p>
       </div>
       <div className="logo-area h-full z-20 relative min-w-[250px] w-full lg:w-3/12">
       </div>

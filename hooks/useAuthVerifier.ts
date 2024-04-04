@@ -9,13 +9,18 @@ export const useAuthVerifier = () => {
   const loading = authStore((state)=> state.loading)
   const setLoading = authStore((state)=> state.setLoading)
   const setUser = authStore((state)=> state.setUser)
+  const logout = authStore((state)=> state.logOut)
 
   useEffect(()=>{
     setLoading(true)
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user)
-        setTimeout(() => setLoading(false), 1000)
+        if (user.isAnonymous) {
+          logout()
+        } else {
+          setUser(user)
+          setTimeout(() => setLoading(false), 1000)
+        }
       } else {
         router.push('/auth/signin')
         setTimeout(() => setLoading(false), 1000)

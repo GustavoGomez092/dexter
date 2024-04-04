@@ -14,7 +14,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
 
-
   return (
         <div className="challenge wrapper min-h-screen flex flex-col justify-between bg-gray-900">
           <ChallengeHeader />

@@ -7,7 +7,6 @@ import Link from "next/link"
 export default function Page({ params }: { params: { slug: string } }) {
 
   const name = applicantStore((state: any) => state.name)
-  console.log(params)
 
   return (
     <main className="flex h-full flex-col justify-center py-6 dark">
