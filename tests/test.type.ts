@@ -26,8 +26,6 @@ type CodeQuestion = {
   testCases: TestCase[]
 };
 
-
-
 type Question = {
   id: string;
   question: MultipleChoiceQuestion | OpenQuestion | CodeQuestion;

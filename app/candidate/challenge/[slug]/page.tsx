@@ -11,6 +11,7 @@ import db from '@/providers/firebase'
 import { useEffect, useState } from 'react'
 import { Test } from '@/tests/test.type'
 import { challengeStore } from '@/store/challengeStore'
+import OpenQuestion from '@/components/OpenQuestion'
 
 type AnswerType = {
   id: string | null,
@@ -19,7 +20,7 @@ type AnswerType = {
 
 enum QuestionTypes {
   MULTIPLE_CHOICE = 'multipleChoice',
-  CODE = 'CODE',
+  CODE = 'code',
   TEXT = 'openQuestion'
 }
 
@@ -29,6 +30,10 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [currentAnswer, setCurrentAnswer] = useState<AnswerType|null>(null)
   const setCurrentQuestion = challengeStore((state) => state.setCurrentQuestion)
   const setTotalQuestions = challengeStore((state) => state.setTotalQuestions)
+  const setChallengeInviteId = challengeStore((state) => state.setChallengeInviteId)
+  const setAllowNext= challengeStore((state) => state.setAllowNext)
+  const setChallengeComplete = challengeStore((state) => state.setComplete)
+  const challengeInviteId = challengeStore((state) => state.challengeInviteId)
 
   const getTestById = (id: string) => {
     return allTests
@@ -38,36 +43,59 @@ export default function Page({ params }: { params: { slug: string } }) {
   }
 
   const getTestByInvitationId = async (id: string) => {
+    setChallengeInviteId(id)
+    setChallengeComplete(false)
     const challenge = await getDoc(doc(db, "Challenge", id))
     return getTestById(challenge.data()?.testId)
   }
 
-  const getCurrentQuestion = async () => {
+  const getCurrentQuestion = async (questionNumber?: number) => {
+
     const ChallengeRef = collection(db, "Challenge", params.slug, "Answers");
     const querySnapshot = await getDocs(ChallengeRef);
     
     let lastAnswerId: string|null = null;
     let lastAnswer:DocumentData|null = null;
 
-    if (querySnapshot.docs.length > 0) {
-      lastAnswerId = querySnapshot.docs[querySnapshot.docs.length-1].id;
-      lastAnswer = querySnapshot.docs[querySnapshot.docs.length-1].data();
-      lastAnswer.type = test?.questions.find(q => q.id === lastAnswerId)?.question.type || null;
-      lastAnswer.question = test?.questions.find(q => q.id === lastAnswerId)?.question || null;
+    if (!questionNumber) {
+      if (querySnapshot.docs.length > 0) {
+        lastAnswerId = querySnapshot.docs[querySnapshot.docs.length-1].id;
+        lastAnswer = querySnapshot.docs[querySnapshot.docs.length-1].data();
+        lastAnswer.type = test?.questions.find(q => q.id === lastAnswerId)?.question.type || null;
+        lastAnswer.question = test?.questions.find(q => q.id === lastAnswerId)?.question || null;
+      } else {
+        lastAnswerId = test?.questions[0].id || null;
+        lastAnswer = {
+          question: test?.questions[0].question,
+          answer: null,
+          correct: 'no',
+          type: test?.questions[0].question.type || null
+        }
+      }
     } else {
-      lastAnswerId = test?.questions[0].id || null;
+      lastAnswerId = test?.questions[questionNumber-1].id || null;
       lastAnswer = {
-        question: test?.questions[0].question,
+        question: test?.questions[questionNumber-1].question,
         answer: null,
         correct: 'no',
-        type: test?.questions[0].question.type || null
+        type: test?.questions[questionNumber-1].question.type || null
       }
     }
 
+
+
     const index = (test?.questions.findIndex(q => q.id === lastAnswerId) || 0) + 1;
-    console.log(index)
-    setCurrentQuestion(index)
-    setTotalQuestions(test?.questions.length || 0)
+
+    console.log('lastAnswerId', lastAnswerId)
+    console.log('lastAnswer', lastAnswer)
+    console.log('index', index)
+    console.log('questionNumber', questionNumber)
+
+    if(index !== questionNumber && challengeInviteId) {
+
+      setCurrentQuestion(index)
+      setTotalQuestions(test?.questions.length || 0)
+    }
 
     setCurrentAnswer({
       id: lastAnswerId,
@@ -85,11 +113,32 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
   }, [params.slug])
 
+  let unsub:any;
+
   useEffect(() => {
     if (test) {
+      setAllowNext(false)
       getCurrentQuestion()
+      unsub = challengeStore.subscribe((current, previous) => {
+        if (!current.currentQuestion) return
+        if (!previous.currentQuestion) return
+        if (current.currentQuestion !== previous.currentQuestion) {
+          getCurrentQuestion(current.currentQuestion)
+        }
+        console.log('subbed')
+      })
     }
   }, [test])
+
+  useEffect(() => {
+    return () => {
+      if (unsub) {
+        console.log('unsubbed')
+        unsub()
+      }
+    }
+  }, [])
+
 
   return (
     <main className="flex h-full flex-col items-center justify-between py-6">
@@ -97,7 +146,7 @@ export default function Page({ params }: { params: { slug: string } }) {
       <div className="left-area w-full lg:w-6/12 h-full lg:h-[68vh] card-border">
       <PerfectScrollbar>
         <div className="question-area h-full">
-          <ChallengePrompter title={"Question"} code={``} prompt={currentAnswer?.data.question.text} />
+          <ChallengePrompter title={"Question"} code={currentAnswer?.data.question?.code} prompt={currentAnswer?.data?.question?.text} />
         </div>
       </PerfectScrollbar>
       </div>
@@ -117,6 +166,11 @@ export default function Page({ params }: { params: { slug: string } }) {
         {
           currentAnswer?.data.type === QuestionTypes.MULTIPLE_CHOICE && (
             <MultipleChoice question={currentAnswer} testId={test?.id||null} invitationId={params.slug} />
+          )
+        }
+        {
+          currentAnswer?.data.type === QuestionTypes.TEXT && (
+            <OpenQuestion question={currentAnswer} testId={test?.id||null} invitationId={params.slug} />
           )
         }
         <div className="output-area"></div>

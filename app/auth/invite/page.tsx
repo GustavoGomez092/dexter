@@ -9,6 +9,7 @@ import { applicantStore } from "@/store/applicantStore"
 import db, { auth } from "@/providers/firebase"
 import { signInAnonymously } from "firebase/auth"
 import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { challengeStore } from "@/store/challengeStore"
 
 export default function page() {
  
@@ -24,9 +25,14 @@ export default function page() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const applicantLogin = applicantStore((state) => state.logIn)
+  const clearChallenge = challengeStore((state: any) => state.clearChallenge)
 
   useEffect(() => {
     setSnippet(getRandomSnippet())
+    const clearing = async () => {
+      await clearChallenge()
+    }
+    clearing()
   }, [])
 
   const checkCreds = async () => {
@@ -39,21 +45,21 @@ export default function page() {
 
     if (!emailEval.success) {
       setEmailError(true)
-      throw new Error()
+      throw new Error('Invalid email address')
     } else {
       setEmailError(false)
     }
 
     if (!nameEval.success) {
       setNameError(true)
-      throw new Error()
+      throw new Error('Invalid name')
     } else {
       setNameError(false)
     }
 
     if (!inviteCodeEval.success) {
       setInviteCodeError(true)
-      throw new Error()
+      throw new Error('Invalid invite code')
     } else {
       setInviteCodeError(false)
     }
@@ -69,10 +75,9 @@ export default function page() {
       await setUserData()
       setLoading(false)
       router.push(`/candidate/challenge/${inviteCode}/introduction`)
-    } catch (error) {
+    } catch (error:any) {
       setLoading(false)
-      setError("Invalid credentials, please check your email, name and invite code.")
-      console.log(error)
+      setError(error.message)
     }
   }
 
@@ -81,9 +86,14 @@ export default function page() {
     const docSnap = await getDoc(challenge);
     
     if (docSnap.exists()) {
-      setInviteCodeError(false)
-      setError("")
-      return true
+      if (docSnap.data()?.started) {
+        setInviteCodeError(true)
+        throw new Error("Invite code already used")
+      } else {
+        setInviteCodeError(false)
+        setError("")
+        return true
+      }
     } else {
       setInviteCodeError(true)
       throw new Error("Invalid invite code")
@@ -91,7 +101,6 @@ export default function page() {
   }
 
   const setUserData = async () => {
-    console.log('this area')
     const document = doc(db, "Challenge", inviteCode);
     await updateDoc(document, {
       name: name,
@@ -164,6 +173,7 @@ export default function page() {
                 <Button
                   color="primary"
                   variant="shadow"
+                  disabled={loading}
                   className="scale-100 hover:scale-[102%] h-14"
                   onClick={() => signInCandidate()}
                 >

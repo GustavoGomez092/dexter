@@ -98,7 +98,7 @@ const signInGoogle = async () => {
                 </h1>
                 <div className="w-full flex-1 mt-8">
                     <div className="flex flex-col items-center gap-y-2">
-                    <Button onClick={() => signInGoogle()} color="primary" className="w-full max-w-xs h-fit p-2 scale-100 hover:scale-[102%]" variant="bordered">
+                    <Button disabled={loading} onClick={() => signInGoogle()} color="primary" className="w-full max-w-xs h-fit p-2 scale-100 hover:scale-[102%]" variant="bordered">
                         <div className="bg-white p-2 rounded-full">
                             <svg className="w-4" viewBox="0 0 533.5 544.3">
                                 <path

@@ -2,7 +2,7 @@
 
 import useUUID from "@/hooks/useUUID"
 import db from "@/providers/firebase"
-import { DocumentData, collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore"
+import { DocumentData, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import allTests from "@/tests"
 import { Chip, Snippet } from "@nextui-org/react"
@@ -26,7 +26,6 @@ export default function Page({ params }: { params: { slug: string } }) {
       ), (querySnapshot) => {
       const newAnswers:DocumentData[] = []
       querySnapshot.forEach((doc) => {
-        console.log(doc.data())
         newAnswers.push({ id: doc.id, data: doc.data() })
       });
       setAnswers(newAnswers)
@@ -51,20 +50,19 @@ export default function Page({ params }: { params: { slug: string } }) {
   }
 
   const createChallenge = async (path: string) => {
+    const challenge = doc(db, "Challenge", path);
+    const docSnap = await getDoc(challenge);
+
+    ChallengeStartedListener(path)
+    getAnswersListener(path)
+    
+    if (docSnap.exists()) return;
+
     await setDoc(doc(db, "Challenge", path), {
       test: selectedTest?.name,
       testId: selectedTest?.id,
       started: false,
     })
-
-    await setDoc(doc(db, "Challenge", path, 'Answers', 'JS_inter_001_001'), {
-      answer: "A closure is a function having access to the parent scope, even after the parent function has closed.",
-      question: 'What is a Closure in JavaScript?',
-      correct: 'no',
-    })
-
-    ChallengeStartedListener(path)
-    getAnswersListener(path)
   }
 
   useEffect(() => {
@@ -107,7 +105,6 @@ export default function Page({ params }: { params: { slug: string } }) {
               <h2 className="text-xl text-text font-bold">Real-time test</h2>
               {
                 answers && answers.map((answer: DocumentData, index: number) => {
-                  console.log(answers)
                   return (                  
                     <AdminQuestion
                       key={`admin-question-${index}`}

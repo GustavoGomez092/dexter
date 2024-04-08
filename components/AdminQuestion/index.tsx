@@ -3,6 +3,10 @@ import {Card, CardBody} from "@nextui-org/react";
 import allTests from "@/tests";
 import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import db from "@/providers/firebase";
+import hljs from 'highlight.js/lib/core';
+import javascript from 'highlight.js/lib/languages/javascript';
+import 'highlight.js/styles/hybrid.min.css';
+import "github-markdown-css"
 
 export enum Correct {
   YES = 'yes',
@@ -59,6 +63,14 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
       })
   }
 
+  // Then register the languages you need
+  hljs.registerLanguage('javascript', javascript);
+
+  const highlightedCode = hljs.highlight(
+    `${question?.question?.code}`,
+    { language: 'javascript' }
+  ).value
+
   return (
     <Card className={isCorrect()}>
       <CardBody>
@@ -66,6 +78,15 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
           <div className="flex flex-col w-10/12">
             <p className="text-sm">Question: {index + 1} {answer?.correct === Correct.CHECK ? '(Requires input)' : answer?.correct === Correct.NO ? '(Failed)' : '(Passed)'}</p>
             <p className="font-bold text-lg mb-2">{question?.question.text}</p>
+            {
+              question?.question?.code &&
+              <div className="markdown-body !mb-4 rounded-3xl">
+                <pre>
+                  <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: highlightedCode}}>
+                  </code>
+                </pre>
+              </div>
+            }
           </div>
           {
             answer?.correct === Correct.CHECK &&
@@ -83,7 +104,7 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
             </div>
           }
         </div>
-        <p className="mb-2">{answer?.answer}</p>
+        <p className="mb-2"><span className="font-bold mr-2">ANSWER:</span>{answer?.answer}</p>
       </CardBody>
     </Card>
   );

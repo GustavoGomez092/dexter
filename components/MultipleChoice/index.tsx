@@ -1,19 +1,18 @@
 import db from "@/providers/firebase";
+import { challengeStore } from "@/store/challengeStore";
 import { Radio, RadioGroup, cn } from "@nextui-org/react";
 import { DocumentData, doc, setDoc } from "firebase/firestore";
 
 const MultipleChoice = ({question, testId, invitationId}: {question: DocumentData, testId:string|null, invitationId:string|null }) => {
 
+  const setAllowNext = challengeStore((state) => state.setAllowNext)
+
   const setOption = async (e:React.ChangeEvent<HTMLInputElement>) => {
-    console.log('option selected: ', e.target.value)
 
     // save the answer to the database
     if (!testId || !invitationId) return
 
     const correctOption = question?.data?.question?.options.find((option:any) => option.correct)
-
-    console.log('Question: ', question.id)
-    console.log('path: ',  'Challenge', invitationId, 'Answers', question.id)
 
     await setDoc(doc(db, 'Challenge', invitationId, 'Answers', question.id), {
       answer: e.target.value,
@@ -21,9 +20,8 @@ const MultipleChoice = ({question, testId, invitationId}: {question: DocumentDat
       correct: correctOption.text === e.target.value ? 'yes' : 'no'
     })
 
+    setAllowNext(true)
   }
-
-  console.log('Question: ', question)
   
   return (
     <div className="dark h-full w-full flex items-center">

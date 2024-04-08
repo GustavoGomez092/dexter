@@ -16,12 +16,13 @@ export const applicantStore = create<ApplicantStoreType>()(
       isLoggedIn: () => (get() as ApplicantStoreType).inviteId !== '' ? true : false,
       logOut: async () => {
         await signOut(auth)
-        set(() => ({ applicant: { name: '', email: ''}, inviteId: ''}))
+        set(() => ({ name: '', email: '', inviteId: ''}))
+        localStorage.removeItem("dexter-applicant-storage")
       },
       setLoading: (loading: boolean) => set(() => ({ loading: loading })),
     }),
     {
-      name: 'dexter-challenge-storage',
+      name: 'dexter-applicant-storage',
       storage: createJSONStorage(() => sessionStorage),
     },
   ),
