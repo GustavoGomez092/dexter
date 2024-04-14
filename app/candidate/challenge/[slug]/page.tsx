@@ -86,10 +86,6 @@ export default function Page({ params }: { params: { slug: string } }) {
 
     const index = (test?.questions.findIndex(q => q.id === lastAnswerId) || 0) + 1;
 
-    console.log('lastAnswerId', lastAnswerId)
-    console.log('lastAnswer', lastAnswer)
-    console.log('index', index)
-    console.log('questionNumber', questionNumber)
 
     if(index !== questionNumber && challengeInviteId) {
 
@@ -152,10 +148,10 @@ export default function Page({ params }: { params: { slug: string } }) {
       </div>
       <div className="right-area w-full h-full lg:h-[68vh] lg:w-6/12 card-border">
         {
-          false && (
+          currentAnswer?.data.type === QuestionTypes.CODE && (
             <>
               <div className="editor-area h-96 lg:h-4/6 px-6 pt-2 overflow-hidden">
-                <CodeEditor />
+                <CodeEditor question={currentAnswer} testId={test?.id||null} invitationId={params.slug} />
               </div>
               <div className="console-area h-96 lg:h-2/6 px-6 py-2">
                 <Console />

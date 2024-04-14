@@ -2,20 +2,29 @@
 
 import "github-markdown-css"
 import "./style.css"
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import 'highlight.js/styles/hybrid.min.css';
+import { codeToHtml } from 'shiki'
+import { useEffect, useState } from "react"
 
 
 
 export default function ChallengePrompter({ title, prompt, code}: { title: string, prompt: string, code: string }) {
-  // Then register the languages you need
-  hljs.registerLanguage('javascript', javascript);
+  const [fialCode, setFinalCode] = useState<any>("")
 
-  const highlightedCode = hljs.highlight(
-    `${code}`,
-    { language: 'javascript' }
-  ).value
+
+
+  useEffect(()=> {
+    const highlightedCode = async (code: string) => {
+      const shiki = await codeToHtml(`${code}`, {
+        lang: 'javascript',
+        theme: 'github-dark-default'
+      })
+      return shiki;
+    }
+
+    highlightedCode(code).then((res) => {
+      setFinalCode(res)
+    })
+  })
 
   return (
     <div className="markdown-body p-6 h-full">
@@ -25,7 +34,7 @@ export default function ChallengePrompter({ title, prompt, code}: { title: strin
           {title}
         </h1>
       }
-      <div data-track-load="description_content" className="xFUwe w-full h-full flex flex-col content-center justify-center relative -top-0 lg:-top-20">
+      <div data-track-load="description_content" className="w-full flex flex-col relative h-[calc(100%-80px)] justify-center">
         {
           prompt &&
           <p className=" text-[22px]">
@@ -33,9 +42,9 @@ export default function ChallengePrompter({ title, prompt, code}: { title: strin
           </p>
         }
         {
-          code &&
+          code && fialCode &&
           <pre>
-            <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: highlightedCode}}>
+            <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: fialCode}}>
             </code>
           </pre>
         }

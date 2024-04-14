@@ -13,6 +13,7 @@ type MultipleChoiceQuestion = {
 type OpenQuestion = {
   type: 'openQuestion';
   text: string;
+  code?: string;
 };
 
 type TestCase = {
@@ -23,7 +24,9 @@ type TestCase = {
 type CodeQuestion = {
   type: 'code';
   text: string;
-  testCases: TestCase[]
+  language: string;
+  testCases: TestCase[],
+  code?: string;
 };
 
 type Question = {

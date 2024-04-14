@@ -42,6 +42,7 @@ const javascriptFundamentals:Test = {
       id: 'JS_fund_001_003',
       question: {
         type: 'code',
+        language: 'javascript',
         text: 'write a function that takes a string as an argument and returns the string reversed.',
         testCases: [
           {
@@ -59,6 +60,7 @@ const javascriptFundamentals:Test = {
       id: 'JS_fund_001_004',
       question: {
         type: 'code',
+        language: 'javascript',
         text: 'write a function that takes a string as an argument and returns the string reversed.',
         testCases: [
           {

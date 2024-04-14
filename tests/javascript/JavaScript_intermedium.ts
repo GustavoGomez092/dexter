@@ -8,6 +8,39 @@ const javascriptIntermedium: Test = {
   difficulty: 2,
   questions: [
     {
+      id: "JS_inter_001_000",
+      question: {
+        type: "code",
+        language: "javascript",
+        text: "Create a function that gets a word as an argument and returns the word reversed.",
+        code: 
+`
+function reverseWord(word) {
+  // Write your code here
+  console.log('Output to console')
+  return word
+}
+
+reverseWord("welcome");
+
+`,
+        testCases: [
+          {
+            input: "test",
+            output: "tset",
+          },
+          {
+            input: "hello",
+            output: "olleh",
+          },
+          {
+            input: "world",
+            output: "dlrow",
+          },
+        ],
+      },
+    },
+    {
       id: "JS_inter_001_001",
       question: {
         type: "multipleChoice",
@@ -44,17 +77,19 @@ const javascriptIntermedium: Test = {
       question: {
         type: "multipleChoice",
         text: "What is the output of the following code?",
-        code: `
-      function foo() {
-        var a = 3;
-        function bar() {
-          console.log(a);
-        }
-        return bar;
-      }
-      var baz = foo();
-      baz();
-      `,
+        code: 
+`
+function foo() {
+var a = 3;
+function bar() {
+  console.log(a);
+}
+return bar;
+}
+var baz = foo();
+baz();
+
+`,
         options: [
           {
             text: "3",

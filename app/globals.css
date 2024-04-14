@@ -43,3 +43,7 @@ body, :root {
         transform: rotate(0deg);
     }
 }
+
+code {
+    font-size: 18px !important;
+}

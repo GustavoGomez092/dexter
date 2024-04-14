@@ -3,9 +3,7 @@ import {Card, CardBody} from "@nextui-org/react";
 import allTests from "@/tests";
 import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import db from "@/providers/firebase";
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-import 'highlight.js/styles/hybrid.min.css';
+import { codeToHtml } from 'shiki'
 import "github-markdown-css"
 
 export enum Correct {
@@ -28,6 +26,7 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
 
   const question = getQuestionById(questionId);
   const [answer, setAnswer] = useState<DocumentData>({})
+  const [code, setCode] = useState<string>('')
 
   const isCorrect = () => {
     if (!answer) return '';
@@ -63,13 +62,17 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
       })
   }
 
-  // Then register the languages you need
-  hljs.registerLanguage('javascript', javascript);
+  const generateCodeSnippet = async (code: string) => {
+    const highlightedCode = await codeToHtml(`${code}`, {
+      lang: 'javascript',
+      theme: 'github-dark-default'
+    })
+    setCode(highlightedCode)
+  }
 
-  const highlightedCode = hljs.highlight(
-    `${question?.question?.code}`,
-    { language: 'javascript' }
-  ).value
+  useEffect(() => {
+    if (question?.question?.code) generateCodeSnippet(question?.question?.code)
+  }, [question])
 
   return (
     <Card className={isCorrect()}>
@@ -82,7 +85,7 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
               question?.question?.code &&
               <div className="markdown-body !mb-4 rounded-3xl">
                 <pre>
-                  <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: highlightedCode}}>
+                  <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: code}}>
                   </code>
                 </pre>
               </div>
