@@ -15,6 +15,10 @@ const javascriptIntermedium: Test = {
         text: "Create a function that gets a word as an argument and returns the word reversed.",
         code: 
 `
+
+// DO NOT change the name of the function,
+// else the tests will fail
+
 function reverseWord(word) {
   // Write your code here
   console.log('Output to console')
@@ -26,14 +30,17 @@ reverseWord("welcome");
 `,
         testCases: [
           {
+            function: "reverseWord",
             input: "test",
             output: "tset",
           },
           {
+            function: "reverseWord",
             input: "hello",
             output: "olleh",
           },
           {
+            function: "reverseWord",
             input: "world",
             output: "dlrow",
           },

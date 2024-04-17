@@ -5,6 +5,7 @@ import { DocumentData, doc, onSnapshot, setDoc } from "firebase/firestore";
 import db from "@/providers/firebase";
 import { codeToHtml } from 'shiki'
 import "github-markdown-css"
+import { TestResultsType } from "../CodeEditor";
 
 export enum Correct {
   YES = 'yes',
@@ -27,6 +28,7 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
   const question = getQuestionById(questionId);
   const [answer, setAnswer] = useState<DocumentData>({})
   const [code, setCode] = useState<string>('')
+  const [testCode, setTestCode] = useState<string>('')
 
   const isCorrect = () => {
     if (!answer) return '';
@@ -70,15 +72,31 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
     setCode(highlightedCode)
   }
 
+  const generateUserCode = async (code: string) => {
+    const highlightedCode = await codeToHtml(`${code}`, {
+      lang: 'javascript',
+      theme: 'github-dark-default'
+    })
+    setTestCode(highlightedCode)
+  }
+
   useEffect(() => {
-    if (question?.question?.code) generateCodeSnippet(question?.question?.code)
+    if(!question) return
+    if (question.question.code) generateCodeSnippet(question?.question?.code)
   }, [question])
 
+
+  useEffect(() => {
+    if (!Array.isArray(answer?.answer)) return;
+    if (testCode) return;
+    generateUserCode(answer?.answer[0].code) 
+  }, [answer])
+
   return (
-    <Card className={isCorrect()}>
+    <Card className={`${isCorrect()} p-4`}>
       <CardBody>
         <div className="flex flex-row">
-          <div className="flex flex-col w-10/12">
+          <div className="flex flex-col w-full lg:w-10/12">
             <p className="text-sm">Question: {index + 1} {answer?.correct === Correct.CHECK ? '(Requires input)' : answer?.correct === Correct.NO ? '(Failed)' : '(Passed)'}</p>
             <p className="font-bold text-lg mb-2">{question?.question.text}</p>
             {
@@ -107,7 +125,33 @@ const AdminQuestion = ({questionId, index, challengeId}: props) => {
             </div>
           }
         </div>
-        <p className="mb-2"><span className="font-bold mr-2">ANSWER:</span>{answer?.answer}</p>
+        <p className="mb-2 w-full lg:w-10/12"><span className="font-bold mr-2">ANSWER:</span>
+        {
+          answer?.answer && typeof answer?.answer !== 'string'
+          ? (
+            <>
+              <div className="markdown-body !mb-4 !mt-4 rounded-3xl">
+                <pre>
+                  <code className="highlight highlight-source-js" dangerouslySetInnerHTML={{__html: testCode}}>
+                  </code>
+                </pre>
+              </div>
+              <div className="flex flex-row gap-6 ml-2">
+                {
+                  answer?.answer.map((x:TestResultsType, indx:number)=> (
+                    <div className="flex flex-col gap-1">
+                      <p className="font-bold">Test {indx+1}</p>
+                      <p>Input: {x.input}</p>
+                      <p>Output: {x.output}</p>
+                      <p>Passed: {x.passed}</p>
+                    </div>
+                  ))
+                }
+              </div>
+            </>
+          )
+          : answer?.answer
+        }</p>
       </CardBody>
     </Card>
   );

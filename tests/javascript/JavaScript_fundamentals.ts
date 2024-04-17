@@ -43,13 +43,15 @@ const javascriptFundamentals:Test = {
       question: {
         type: 'code',
         language: 'javascript',
-        text: 'write a function that takes a string as an argument and returns the string reversed.',
+        text: 'write a function called "reversedWord" that takes a string as an argument and returns the string reversed.',
         testCases: [
           {
+            function: 'reverseWord',
             input: 'hello',
             output: 'olleh'
           },
           {
+            function: 'reverseWord',
             input: 'world',
             output: 'dlrow'
           }
@@ -61,13 +63,15 @@ const javascriptFundamentals:Test = {
       question: {
         type: 'code',
         language: 'javascript',
-        text: 'write a function that takes a string as an argument and returns the string reversed.',
+        text: 'write a function called "reversedWord" that takes a string as an argument and returns the string reversed.',
         testCases: [
           {
+            function: 'reverseWord',
             input: 'hello',
             output: 'olleh'
           },
           {
+            function: 'reverseWord',
             input: 'world',
             output: 'dlrow'
           }

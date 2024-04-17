@@ -121,7 +121,6 @@ export default function Page({ params }: { params: { slug: string } }) {
         if (current.currentQuestion !== previous.currentQuestion) {
           getCurrentQuestion(current.currentQuestion)
         }
-        console.log('subbed')
       })
     }
   }, [test])
@@ -129,7 +128,6 @@ export default function Page({ params }: { params: { slug: string } }) {
   useEffect(() => {
     return () => {
       if (unsub) {
-        console.log('unsubbed')
         unsub()
       }
     }

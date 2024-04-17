@@ -206,13 +206,16 @@ const javascriptAdvanced: Test = {
       id: "JS_adv_001_010",
       question: {
         type: 'code',
-        text: 'Write a function in JavaScript that takes an array of numbers and returns the sum of its elements.',
+        language: 'javascript',
+        text: 'Write a function named "sumArray" that takes an array of numbers and returns the sum of its elements.',
         testCases: [
           {
+            function: 'sumArray',
             input: '[1, 2, 3, 4, 5]',
             output: '15'
           },
           {
+            function: 'sumArray',
             input: '[10, 20, 30, 40, 50]',
             output: '150'
           }

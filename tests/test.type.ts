@@ -17,8 +17,9 @@ type OpenQuestion = {
 };
 
 type TestCase = {
+  function: string;
   input: string;
-  output: string
+  output: string;
 }
 
 type CodeQuestion = {

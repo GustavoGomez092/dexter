@@ -1,13 +1,23 @@
 "use client"
 
 import Editor from "@monaco-editor/react"
-import { Button, code } from "@nextui-org/react"
-import { DocumentData } from "firebase/firestore"
+import { Button } from "@nextui-org/react"
+import { DocumentData, doc, setDoc } from "firebase/firestore"
 import { getHighlighter } from "shiki"
 import { shikiToMonaco } from "@shikijs/monaco"
-import { ReactElement, useRef } from "react"
+import { useRef, useState } from "react"
 import { codeEditorStore } from "@/store/codeEditorStore"
-import { set } from "firebase/database"
+import { challengeStore } from "@/store/challengeStore"
+import db from "@/providers/firebase"
+import { useJS } from "@/hooks/useJS"
+
+export type TestResultsType = {
+  code: string,
+  input: any,
+  expectedOutput: any,
+  output: any,
+  passed: string
+}
 
 const CodeEditor = ({
   question,
@@ -19,13 +29,15 @@ const CodeEditor = ({
   invitationId: string | null
 }) => {
 
-  // console.log(question)
+  console.log(question)
   // console.log(testId)
   // console.log(invitationId)
 
   const editorRef = useRef<any>(null);
   const setCode = codeEditorStore((state) => state.setCode)
   const setLanguage = codeEditorStore((state) => state.setLanguage)
+  const { runTest } = useJS()
+  const [disable, setDisable] = useState(false)
 
   function handleEditorDidMount(editor:any, monaco:any) {
     editorRef.current = editor;
@@ -53,16 +65,55 @@ const CodeEditor = ({
     setCode(editorRef?.current?.getValue())
   }
 
+  const setAllowNext = challengeStore((state) => state.setAllowNext)
+
+  const runTests = async () => {
+    setDisable(true)
+    const testResults:TestResultsType[] = []
+    for (const test of question.data.question.testCases) {
+      const result = await runTest(editorRef?.current?.getValue(), test.function, test.input, test.output)
+      testResults.push({
+        code: editorRef?.current?.getValue(),
+        input: test.input,
+        expectedOutput: test.output,
+        output: result.output,
+        passed: result.status
+      })
+    }
+    await setAnswer(testResults)
+    return testResults
+  }
+
+  const setAnswer = async (answer:TestResultsType[]) => {
+
+    // save the answer to the database
+    if (!testId || !invitationId) return
+
+    const passedAll = answer.filter((a) => a.passed === 'fail').length === 0
+
+    await setDoc(doc(db, 'Challenge', invitationId, 'Answers', question.id), {
+      answer: answer,
+      question: question?.data?.question?.text,
+      correct: passedAll ? 'yes' : 'no'
+    })
+
+    setAllowNext(true)
+  }
+
   return (
     <>
       <div className="flex items-center justify-between mb-2">
         <p className="text-gray-500 capitalize">{question.data.question.language}</p>
         <div className="flex dark">
-          <Button onClick={()=> showValue()} color="primary" variant="bordered" className="mr-4 font-bold">
+          <Button onClick={()=> showValue()} disabled={disable} color="primary" variant="bordered" className={`mr-4 font-bold ${ disable ? 'opacity-40 pointer-events-none' : '' }`}>
             Test code
           </Button>
-          <Button color="primary" className="text-text font-bold">
-            Submit
+          <Button onClick={()=> runTests()} disabled={disable} color="primary" className={`text-text font-bold ${ disable ? 'opacity-40 pointer-events-none' : '' }`}>
+            {
+              disable
+              ? 'Submitted'
+              : 'Submit'
+            }
           </Button>
         </div>
       </div>

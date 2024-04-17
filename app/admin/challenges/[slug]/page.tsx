@@ -8,6 +8,15 @@ import allTests from "@/tests"
 import { Chip, Snippet } from "@nextui-org/react"
 import AdminQuestion from "@/components/AdminQuestion"
 import { challengeStore } from "@/store/challengeStore"
+import PieChart from '@/components/PieChart'
+
+type ChallengeSummary = {
+email?: string,
+name?: string
+started?: boolean
+test?: string
+testId?: string
+}
 
 export default function Page({ params }: { params: { slug: string } }) {
   const { getShortUUID } = useUUID()
@@ -16,6 +25,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [challengeId, setChallengeId] = useState<string | null>(null)
   const [started, setStarted] = useState(false)
   const [answers, setAnswers] = useState<DocumentData[]>([])
+  const [challengeData, setChallengeData] = useState<ChallengeSummary>()
 
   const getAnswersListener = async (challengeId: string) => {
     onSnapshot(
@@ -45,6 +55,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const ChallengeStartedListener = (path: string) => {
     onSnapshot(doc(db, "Challenge", path), (doc: DocumentData) => {
       const collectionData = doc.data()
+      setChallengeData(collectionData)
       setStarted(collectionData.started)
     })
   }
@@ -81,7 +92,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
   }, [challengeId])
 
-
+  console.log(selectedTest)
 
   return (
     <main className="flex h-full flex-col items-center justify-between py-6">
@@ -100,7 +111,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             <p className="text-text mb-2">Invitation code:</p>
             <Snippet color="primary">{challengeId}</Snippet>
           </div>
-          <div className="flex flex-row gap-x-16">
+          <div className="flex flex-col-reverse lg:flex-row gap-x-16">
             <div className="flex flex-col gap-4 w-full lg:w-1/2">
               <h2 className="text-xl text-text font-bold">Real-time test</h2>
               {
@@ -116,8 +127,41 @@ export default function Page({ params }: { params: { slug: string } }) {
                 })
               }
             </div>
-            <div className="flex flex-col gap-4 w-full lg:w-1/2">
+            <div className="flex flex-col w-full lg:w-1/2 sticky h-fit top-16 z-1">
               <h2 className="text-xl text-text font-bold">Insights</h2>
+              {
+                challengeData && (
+                  <div className="my-6">
+                    <h3 className="text-xl text-text leading-snug"><span className="font-bold">Participant:</span> {challengeData?.name}</h3>
+                    <p className="text-text"><span className="font-bold">Email:</span> {challengeData?.email}</p>
+                  </div>
+                )
+              }
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-row justify-between">
+                  <p className="text-text">Total questions</p>
+                  <p className="text-text">{selectedTest?.questions.length}</p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-text">Pending questions</p>
+                  <p className="text-text">{selectedTest?.questions && selectedTest?.questions.length - answers.length}</p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-text">Correct answers</p>
+                  <p className="text-text">{answers.filter((a) => a.data.correct === "yes").length}</p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-text">Incorrect answers</p>
+                  <p className="text-text">{answers.filter((a) => a.data.correct === "no").length}</p>
+                </div>
+                <div className="flex flex-row justify-between">
+                  <p className="text-text">Answers pending check</p>
+                  <p className="text-text">{answers.filter((a) => a.data.correct === "check").length}</p>
+                </div>
+              </div>
+              <div className="chart">
+                <PieChart />
+              </div>
             </div>
           </div>
         </div>
