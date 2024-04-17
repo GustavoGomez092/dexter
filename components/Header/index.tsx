@@ -3,6 +3,7 @@ import { Button } from '@nextui-org/react'
 import './style.css'
 import { authStore } from '@/store/authStore'
 import { applicantStore } from '@/store/applicantStore'
+import Image from 'next/image'
 export default function Header() {
 
   const user = authStore((state) => state.user)
@@ -15,7 +16,7 @@ export default function Header() {
     <div className='h-24 container mx-auto relative flex justify-between items-center dark'>
       <div className="absolute left-0 w-full h-full" />
       <div className="logo-area h-full z-20 relative w-fit">
-        <img src="/assets/img/logo.svg" className="h-full py-6" alt="logo" />
+      <Image src="/assets/img/logo.svg" width="190" height="46"  className="h-full py-6" alt="logo" />
       </div>
       {
         user.email &&

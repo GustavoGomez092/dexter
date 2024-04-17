@@ -4,6 +4,7 @@ import './style.css'
 import { challengeStore } from '@/store/challengeStore'
 import { Button } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 export default function ChallengeHeader() {
 
@@ -55,7 +56,7 @@ export default function ChallengeHeader() {
       </div>
       <div className="logo-area h-full z-20 relative  w-full lg:w-3/12">
         <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl left-12 top-7 opacity-40" />
-        <img src="/assets/img/logo.svg" className="h-full py-6 max-w-[200px]" alt="logo" />
+        <Image src="/assets/img/logo.svg" width="190" height="46" className="h-full py-6 max-w-[200px]" alt="logo" />
       </div>
       <div className="header-center text-center h-full lg:w-6/12">
         <h1 className=" z-20 relative text-2xl font-bold text-gray-400">Participant: {name}</h1>

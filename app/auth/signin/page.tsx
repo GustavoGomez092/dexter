@@ -9,6 +9,7 @@ import { auth } from '@/providers/firebase';
 import { authStore } from '@/store/authStore';
 import { z } from "zod";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function page() {
 
@@ -86,7 +87,7 @@ const signInGoogle = async () => {
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
             <div className='w-auto relative mt-16 lg:mt-0'>
             <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl right-32 top-6 opacity-40" />
-                <img src="/assets/img/logo.svg" alt="logo"
+                <Image src="/assets/img/logo.svg" width="190" height="46" alt="logo"
                     className="w-6/12 mx-auto" />
             </div>
             <div className="mt-12 flex flex-col items-center">

@@ -10,6 +10,7 @@ import db, { auth } from "@/providers/firebase"
 import { signInAnonymously } from "firebase/auth"
 import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { challengeStore } from "@/store/challengeStore"
+import Image from "next/image"
 
 export default function page() {
  
@@ -124,8 +125,7 @@ export default function page() {
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
           <div className="w-auto relative mt-16 lg:mt-0">
             <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl right-32 top-6 opacity-40" />
-            <img
-              src="/assets/img/logo.svg"
+            <Image src="/assets/img/logo.svg" width="190" height="46" 
               alt="logo"
               className="w-6/12 mx-auto"
             />
