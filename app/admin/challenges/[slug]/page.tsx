@@ -7,18 +7,16 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   query,
   setDoc,
-  where,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import allTests from '@/tests';
 import { Chip, Snippet, Button } from '@nextui-org/react';
 import AdminQuestion from '@/components/AdminQuestion';
 import { challengeStore } from '@/store/challengeStore';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type ChallengeSummary = {
   email?: string;
@@ -40,6 +38,8 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<DocumentData[]>([]);
   const [challengeData, setChallengeData] = useState<ChallengeSummary>();
+  const setInviteId = challengeStore((state) => state.setChallengeInviteId);
+  const router = useRouter();
 
   const getAnswersListener = async (challengeId: string) => {
     onSnapshot(
@@ -103,7 +103,10 @@ export default function Page({ params }: { params: { slug: string } }) {
     }
   }, [challengeId]);
 
-  console.log(selectedTest);
+  const backToChallenges = () => {
+    setInviteId('');
+    router.push('/admin/challenges');
+  };
 
   return (
     <main className='flex h-full flex-col items-center justify-between py-6'>
@@ -112,13 +115,15 @@ export default function Page({ params }: { params: { slug: string } }) {
           <div className='mb-16 flex flex-col gap-6 lg:flex-row lg:gap-16'>
             <div className='top-area flex w-full flex-col lg:w-1/2'>
               <div className='max-w-[500px]'>
-                <Link href='/admin/challenges' className='w-fit'>
-                  <Button color='primary' className='mb-6 w-fit'>
-                    <span className='font-bold text-text'>
-                      ← Back to challenges
-                    </span>
-                  </Button>
-                </Link>
+                <Button
+                  color='primary'
+                  onPress={() => backToChallenges()}
+                  className='mb-6 w-fit'
+                >
+                  <span className='font-bold text-text'>
+                    ← Back to challenges
+                  </span>
+                </Button>
                 <div className='mb-2 flex flex-row items-center gap-x-6'>
                   <h1 className='w-10/12 text-3xl font-bold text-text'>
                     {selectedTest?.name}
