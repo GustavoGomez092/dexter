@@ -99,25 +99,29 @@ export default function Page({ params }: { params: { slug: string } }) {
     <main className="flex h-full flex-col items-center justify-between py-6">
       <div className="container flex-row lg:flex h-full gap-2">
         <div className="container flex flex-col gap-4">
-          <div className="top-area flex flex-col max-w-[500px] mb-16">
-            <Link href="/admin/challenges" className="w-fit">
-              <Button color="primary" className="w-fit mb-6"><span className="font-bold text-text">← Back to challenges</span></Button>
-            </Link>
-            <div className="flex flex-row gap-x-6 items-center mb-2">
-              <h1 className="text-3xl text-text font-bold w-10/12">
-                {selectedTest?.name}
-              </h1>
-              <Chip color={started ? "primary" : "danger"} className="w-2/12">
-                {started ? "started" : "not started"}
-              </Chip>
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-16 mb-16">
+          <div className="top-area flex flex-col w-full lg:w-1/2">
+            <div className="max-w-[500px]">
+              <Link href="/admin/challenges" className="w-fit">
+                <Button color="primary" className="w-fit mb-6"><span className="font-bold text-text">← Back to challenges</span></Button>
+              </Link>
+              <div className="flex flex-row gap-x-6 items-center mb-2">
+                <h1 className="text-3xl text-text font-bold w-10/12">
+                  {selectedTest?.name}
+                </h1>
+                <Chip color={started ? "primary" : "danger"} className="w-2/12">
+                  {started ? "started" : "not started"}
+                </Chip>
+              </div>
+              <p className="text-text mb-6">{selectedTest?.description}</p>
             </div>
-            <p className="text-text mb-6">{selectedTest?.description}</p>
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="w-full lg:w-1/2">
+          </div>
+          <div className="flex flex-col gap-4 w-full lg:w-1/2">
+              <div className="w-full">
                 <p className="text-text mb-2 font-bold">Login URL:</p>
                 <Snippet color="primary" className="w-full">{`${window.location.hostname}/auth/invite`}</Snippet>
               </div>
-              <div className="w-full lg:w-1/2">
+              <div className="w-full">
                 <p className="text-text mb-2 font-bold">Invitation code:</p>
                 <Snippet color="primary" className="w-full">{challengeId}</Snippet>
               </div>
@@ -125,7 +129,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           </div>
           <div className="flex flex-col-reverse lg:flex-row gap-x-16">
             <div className="flex flex-col gap-4 w-full lg:w-1/2">
-              <h2 className="text-xl text-text font-bold">Real-time test</h2>
+              <h2 className="text-xl text-text font-bold pb-4 border-b-white/30 border-b">Real-time test</h2>
               {
                 answers && answers.map((answer: DocumentData, index: number) => {
                   return (                  
@@ -140,7 +144,7 @@ export default function Page({ params }: { params: { slug: string } }) {
               }
             </div>
             <div className="flex flex-col w-full lg:w-1/2 sticky h-fit top-16 z-1">
-              <h2 className="text-xl text-text font-bold">Insights</h2>
+              <h2 className="text-xl text-text font-bold pb-4 border-b-white/30 border-b">Insights</h2>
               {
                 challengeData && (
                   <div className="my-6">
