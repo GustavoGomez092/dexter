@@ -1,9 +1,5 @@
 'use client'
 
-import '../globals.css'
-import { Inter } from 'next/font/google'
-const inter = Inter({ subsets: ['latin'] })
-import 'react-perfect-scrollbar/dist/css/styles.css';
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useAuthVerifier } from '@/hooks/useAuthVerifier';

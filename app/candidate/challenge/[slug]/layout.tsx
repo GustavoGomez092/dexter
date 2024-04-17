@@ -1,10 +1,7 @@
 'use client'
 
-import { Inter } from 'next/font/google'
 import ChallengeHeader from '../../../../components/ChallengeHeader'
 import ChallengeFooter from '../../../../components/ChallengeFooter'
-const inter = Inter({ subsets: ['latin'] })
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 

@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    esmExternals: 'loose'
+    // esmExternals: 'loose',
+    // serverComponentsExternalPackages: ['vscode-oniguruma', 'shiki'],
   },
   async redirects() {
     return [

@@ -15,7 +15,6 @@ const javascriptIntermedium: Test = {
         text: "Create a function that gets a word as an argument and returns the word reversed.",
         code: 
 `
-
 // DO NOT change the name of the function,
 // else the tests will fail
 

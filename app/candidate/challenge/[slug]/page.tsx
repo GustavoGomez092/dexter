@@ -137,14 +137,14 @@ export default function Page({ params }: { params: { slug: string } }) {
   return (
     <main className="flex h-full flex-col items-center justify-between py-6">
     <div className="container flex-row lg:flex h-full gap-2">
-      <div className="left-area w-full lg:w-6/12 h-full lg:h-[68vh] card-border">
+      <div className="left-area w-full lg:w-6/12 h-full lg:h-[68vh] card-border overflow-auto">
       <PerfectScrollbar>
-        <div className="question-area h-full">
+        <div className="question-area">
           <ChallengePrompter title={"Question"} code={currentAnswer?.data.question?.code} prompt={currentAnswer?.data?.question?.text} />
         </div>
       </PerfectScrollbar>
       </div>
-      <div className="right-area w-full h-full lg:h-[68vh] lg:w-6/12 card-border">
+      <div className="right-area w-full h-full lg:h-[68vh] lg:w-6/12 card-border overflow-auto">
         {
           currentAnswer?.data.type === QuestionTypes.CODE && (
             <>

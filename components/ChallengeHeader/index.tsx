@@ -2,7 +2,7 @@
 import { applicantStore } from '@/store/applicantStore'
 import './style.css'
 import { challengeStore } from '@/store/challengeStore'
-import { Button, Link } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 
 export default function ChallengeHeader() {

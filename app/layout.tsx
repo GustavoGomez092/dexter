@@ -1,9 +1,9 @@
 "use client"
 
-import "./globals.css"
+import "@/app/globals.css"
+import 'react-perfect-scrollbar/dist/css/styles.css';
 import { Inter } from "next/font/google"
 const inter = Inter({ subsets: ["latin"] })
-import "react-perfect-scrollbar/dist/css/styles.css"
 import { NextUIProvider } from "@nextui-org/react"
 
 export default function RootLayout({
