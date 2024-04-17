@@ -5,10 +5,11 @@ import db from "@/providers/firebase"
 import { DocumentData, collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import allTests from "@/tests"
-import { Chip, Snippet } from "@nextui-org/react"
+import { Chip, Snippet, Button } from "@nextui-org/react"
 import AdminQuestion from "@/components/AdminQuestion"
 import { challengeStore } from "@/store/challengeStore"
 import PieChart from '@/components/PieChart'
+import Link from "next/link"
 
 type ChallengeSummary = {
 email?: string,
@@ -98,7 +99,10 @@ export default function Page({ params }: { params: { slug: string } }) {
     <main className="flex h-full flex-col items-center justify-between py-6">
       <div className="container flex-row lg:flex h-full gap-2">
         <div className="container flex flex-col gap-4">
-          <div className="top-area flex flex-col max-w-[450px] mb-16">
+          <div className="top-area flex flex-col max-w-[500px] mb-16">
+            <Link href="/admin/challenges" className="w-fit">
+              <Button color="primary" className="w-fit mb-6"><span className="font-bold text-text">← Back to challenges</span></Button>
+            </Link>
             <div className="flex flex-row gap-x-6 items-center mb-2">
               <h1 className="text-3xl text-text font-bold w-10/12">
                 {selectedTest?.name}
@@ -108,8 +112,16 @@ export default function Page({ params }: { params: { slug: string } }) {
               </Chip>
             </div>
             <p className="text-text mb-6">{selectedTest?.description}</p>
-            <p className="text-text mb-2">Invitation code:</p>
-            <Snippet color="primary">{challengeId}</Snippet>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="w-full lg:w-1/2">
+                <p className="text-text mb-2 font-bold">Login URL:</p>
+                <Snippet color="primary" className="w-full">{`${window.location.hostname}/auth/invite`}</Snippet>
+              </div>
+              <div className="w-full lg:w-1/2">
+                <p className="text-text mb-2 font-bold">Invitation code:</p>
+                <Snippet color="primary" className="w-full">{challengeId}</Snippet>
+              </div>
+            </div>
           </div>
           <div className="flex flex-col-reverse lg:flex-row gap-x-16">
             <div className="flex flex-col gap-4 w-full lg:w-1/2">

@@ -16,7 +16,7 @@ export default function Header() {
     <div className='h-24 container mx-auto relative flex justify-between items-center dark'>
       <div className="absolute left-0 w-full h-full" />
       <div className="logo-area h-full z-20 relative w-fit">
-      <Image src="/assets/img/logo.svg" width="190" height="46"  className="h-full py-6" alt="logo" />
+        <Image src="/assets/img/logo.svg" width="190" height="46"  className="h-full py-6" alt="logo" />
       </div>
       {
         user.email &&
