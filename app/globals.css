@@ -2,52 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
-body, :root {
-    @apply bg-white;
+body,
+:root {
+  @apply bg-white;
 }
 
 .card-border {
-    border: 1px solid #1f2937;
-    border-radius: 3px;
+  border: 1px solid #1f2937;
+  border-radius: 3px;
 }
 
 .container {
-@apply w-full max-w-[1920px] mx-auto px-6;
+  @apply mx-auto w-full max-w-[1920px] px-6;
 }
 
 .header {
-    background-size: 20px 20px;
-    background-image:
-    linear-gradient(to right, #1f2937 1px, transparent 1px),
+  background-size: 20px 20px;
+  background-image: linear-gradient(to right, #1f2937 1px, transparent 1px),
     linear-gradient(to bottom, #1f2937 1px, transparent 1px);
 }
 
 .rotation-animation {
-    animation: rotate 15s linear infinite;
+  animation: rotate 15s linear infinite;
 }
 .counter-rotation-animation {
-    animation: rotate 5s linear infinite;
-    animation-direction: reverse;
+  animation: rotate 5s linear infinite;
+  animation-direction: reverse;
 }
 
 .delayed-counter-rotation-animation {
-    animation: rotate 10s linear infinite;
-    animation-direction: reverse;
+  animation: rotate 10s linear infinite;
+  animation-direction: reverse;
 }
 
 @keyframes rotate {
-    0% {
-        transform: rotate(360deg);
-    }
-    100% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 code {
-    font-size: 18px !important;
+  font-size: 18px !important;
 }
 
-.markdown-body .highlight pre, .markdown-body pre {
-    overflow: auto !important;
+.markdown-body .highlight pre,
+.markdown-body pre {
+  overflow: auto !important;
 }

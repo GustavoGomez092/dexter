@@ -1,9 +1,9 @@
-import React from "react";
-import {Input} from "@nextui-org/react";
-import {EyeFilledIcon} from "./EyeFilledIcon";
-import {EyeSlashFilledIcon} from "./EyeSlashFilledIcon";
+import React from 'react';
+import { Input } from '@nextui-org/react';
+import { EyeFilledIcon } from './EyeFilledIcon';
+import { EyeSlashFilledIcon } from './EyeSlashFilledIcon';
 
-export default function PasswordInput(props:any) {
+export default function PasswordInput(props: any) {
   const [isVisible, setIsVisible] = React.useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -11,15 +11,19 @@ export default function PasswordInput(props:any) {
     <Input
       {...props}
       endContent={
-        <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+        <button
+          className='focus:outline-none'
+          type='button'
+          onClick={toggleVisibility}
+        >
           {isVisible ? (
-            <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <EyeSlashFilledIcon className='pointer-events-none text-2xl text-default-400' />
           ) : (
-            <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <EyeFilledIcon className='pointer-events-none text-2xl text-default-400' />
           )}
         </button>
       }
-      type={isVisible ? "text" : "password"}
+      type={isVisible ? 'text' : 'password'}
     />
   );
 }

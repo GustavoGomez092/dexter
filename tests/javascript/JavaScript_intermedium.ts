@@ -1,20 +1,19 @@
-import { Test } from "../test.type"
+import { Test } from '../test.type';
 
 const javascriptIntermedium: Test = {
-  id: "js-inter-001",
-  name: "JavaScript Intermedium",
+  id: 'js-inter-001',
+  name: 'JavaScript Intermedium',
   description:
     "A test designed to gauge an intermediate candidate's knowledge of JavaScript.",
   difficulty: 2,
   questions: [
     {
-      id: "JS_inter_001_000",
+      id: 'JS_inter_001_000',
       question: {
-        type: "code",
-        language: "javascript",
-        text: "Create a function that gets a word as an argument and returns the word reversed.",
-        code: 
-`
+        type: 'code',
+        language: 'javascript',
+        text: 'Create a function that gets a word as an argument and returns the word reversed.',
+        code: `
 // DO NOT change the name of the function,
 // else the tests will fail
 
@@ -29,62 +28,61 @@ reverseWord("welcome");
 `,
         testCases: [
           {
-            function: "reverseWord",
-            input: "test",
-            output: "tset",
+            function: 'reverseWord',
+            input: 'test',
+            output: 'tset',
           },
           {
-            function: "reverseWord",
-            input: "hello",
-            output: "olleh",
+            function: 'reverseWord',
+            input: 'hello',
+            output: 'olleh',
           },
           {
-            function: "reverseWord",
-            input: "world",
-            output: "dlrow",
+            function: 'reverseWord',
+            input: 'world',
+            output: 'dlrow',
           },
         ],
       },
     },
     {
-      id: "JS_inter_001_001",
+      id: 'JS_inter_001_001',
       question: {
-        type: "multipleChoice",
-        text: "What is a Closure in JavaScript?",
+        type: 'multipleChoice',
+        text: 'What is a Closure in JavaScript?',
         options: [
           {
-            text: "A closure is a function having access to the parent scope, even after the parent function has closed.",
+            text: 'A closure is a function having access to the parent scope, even after the parent function has closed.',
             correct: true,
           },
           {
-            text: "A closure is a function that encapsulates its own variables and functions, and does not have access to the parent scope.",
+            text: 'A closure is a function that encapsulates its own variables and functions, and does not have access to the parent scope.',
             correct: false,
           },
           {
-            text: "A closure is a function that does not have access to its own scope.",
+            text: 'A closure is a function that does not have access to its own scope.',
             correct: false,
           },
           {
-            text: "A closure is a function that can only be called once.",
+            text: 'A closure is a function that can only be called once.',
             correct: false,
           },
         ],
       },
     },
     {
-      id: "JS_inter_001_002",
+      id: 'JS_inter_001_002',
       question: {
-        type: "openQuestion",
-        text: "Explain the concept of Prototypal Inheritance in JavaScript.",
+        type: 'openQuestion',
+        text: 'Explain the concept of Prototypal Inheritance in JavaScript.',
       },
     },
     {
-      id: "JS_inter_001_003",
+      id: 'JS_inter_001_003',
       question: {
-        type: "multipleChoice",
-        text: "What is the output of the following code?",
-        code: 
-`
+        type: 'multipleChoice',
+        text: 'What is the output of the following code?',
+        code: `
 function foo() {
 var a = 3;
 function bar() {
@@ -98,25 +96,25 @@ baz();
 `,
         options: [
           {
-            text: "3",
+            text: '3',
             correct: true,
           },
           {
-            text: "undefined",
+            text: 'undefined',
             correct: false,
           },
           {
-            text: "ReferenceError: a is not defined",
+            text: 'ReferenceError: a is not defined',
             correct: false,
           },
           {
-            text: "null",
+            text: 'null',
             correct: false,
           },
         ],
       },
     },
   ],
-}
+};
 
-export default javascriptIntermedium
+export default javascriptIntermedium;

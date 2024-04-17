@@ -20,13 +20,13 @@ type TestCase = {
   function: string;
   input: string;
   output: string;
-}
+};
 
 type CodeQuestion = {
   type: 'code';
   text: string;
   language: string;
-  testCases: TestCase[],
+  testCases: TestCase[];
   code?: string;
 };
 

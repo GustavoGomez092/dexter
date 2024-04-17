@@ -1,221 +1,230 @@
-"use client"
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
-import { Button, Code, Input, Spinner } from "@nextui-org/react"
-import randomSnippetGenerator from "../../../hooks/userRandomSnippetGenerator"
-import { useRouter } from "next/navigation"
-import { z } from "zod";
-import { applicantStore } from "@/store/applicantStore"
-import db, { auth } from "@/providers/firebase"
-import { signInAnonymously } from "firebase/auth"
-import { doc, getDoc, updateDoc } from "firebase/firestore"
-import { challengeStore } from "@/store/challengeStore"
-import Image from "next/image"
+'use client';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button, Code, Input, Spinner } from '@nextui-org/react';
+import randomSnippetGenerator from '../../../hooks/userRandomSnippetGenerator';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
+import { applicantStore } from '@/store/applicantStore';
+import db, { auth } from '@/providers/firebase';
+import { signInAnonymously } from 'firebase/auth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { challengeStore } from '@/store/challengeStore';
+import Image from 'next/image';
 
 export default function page() {
- 
-  const [snippet, setSnippet] = useState("")
-  const { getRandomSnippet } = randomSnippetGenerator()
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [name, setName] = useState("")
-  const [inviteCode, setInviteCode] = useState("")
-  const [nameError, setNameError] = useState(false)
-  const [emailError, setEmailError] = useState(false)
-  const [inviteCodeError, setInviteCodeError] = useState(false)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const applicantLogin = applicantStore((state) => state.logIn)
-  const clearChallenge = challengeStore((state: any) => state.clearChallenge)
+  const [snippet, setSnippet] = useState('');
+  const { getRandomSnippet } = randomSnippetGenerator();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [inviteCodeError, setInviteCodeError] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const applicantLogin = applicantStore((state) => state.logIn);
+  const clearChallenge = challengeStore((state: any) => state.clearChallenge);
 
   useEffect(() => {
-    setSnippet(getRandomSnippet())
+    setSnippet(getRandomSnippet());
     const clearing = async () => {
-      await clearChallenge()
-    }
-    clearing()
-  }, [])
+      await clearChallenge();
+    };
+    clearing();
+  }, []);
 
   const checkCreds = async () => {
-    const emailSchema = z.string().email()
-    const nameSchema = z.string().min(3)
-    const inviteCodeSchema = z.string().min(10).max(10)
-    const emailEval = await emailSchema.safeParseAsync(email)
-    const nameEval = await nameSchema.safeParseAsync(name)
-    const inviteCodeEval = await inviteCodeSchema.safeParseAsync(inviteCode)
+    const emailSchema = z.string().email();
+    const nameSchema = z.string().min(3);
+    const inviteCodeSchema = z.string().min(10).max(10);
+    const emailEval = await emailSchema.safeParseAsync(email);
+    const nameEval = await nameSchema.safeParseAsync(name);
+    const inviteCodeEval = await inviteCodeSchema.safeParseAsync(inviteCode);
 
     if (!emailEval.success) {
-      setEmailError(true)
-      throw new Error('Invalid email address')
+      setEmailError(true);
+      throw new Error('Invalid email address');
     } else {
-      setEmailError(false)
+      setEmailError(false);
     }
 
     if (!nameEval.success) {
-      setNameError(true)
-      throw new Error('Invalid name')
+      setNameError(true);
+      throw new Error('Invalid name');
     } else {
-      setNameError(false)
+      setNameError(false);
     }
 
     if (!inviteCodeEval.success) {
-      setInviteCodeError(true)
-      throw new Error('Invalid invite code')
+      setInviteCodeError(true);
+      throw new Error('Invalid invite code');
     } else {
-      setInviteCodeError(false)
+      setInviteCodeError(false);
     }
-  }
+  };
 
   const signInCandidate = async () => {
     try {
-      setLoading(true)
-      await checkCreds()
-      applicantLogin({name, email, inviteId: inviteCode, loading: false})
-      await checkValidInviteCode()
-      await anonymusLogin()
-      await setUserData()
-      setLoading(false)
-      router.push(`/candidate/challenge/${inviteCode}/introduction`)
-    } catch (error:any) {
-      setLoading(false)
-      setError(error.message)
+      setLoading(true);
+      await checkCreds();
+      applicantLogin({ name, email, inviteId: inviteCode, loading: false });
+      await checkValidInviteCode();
+      await anonymusLogin();
+      await setUserData();
+      setLoading(false);
+      router.push(`/candidate/challenge/${inviteCode}/introduction`);
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.message);
     }
-  }
+  };
 
   const checkValidInviteCode = async () => {
-    const challenge = doc(db, "Challenge", inviteCode);
+    const challenge = doc(db, 'Challenge', inviteCode);
     const docSnap = await getDoc(challenge);
-    
+
     if (docSnap.exists()) {
       if (docSnap.data()?.started) {
-        setInviteCodeError(true)
-        throw new Error("Invite code already used")
+        setInviteCodeError(true);
+        throw new Error('Invite code already used');
       } else {
-        setInviteCodeError(false)
-        setError("")
-        return true
+        setInviteCodeError(false);
+        setError('');
+        return true;
       }
     } else {
-      setInviteCodeError(true)
-      throw new Error("Invalid invite code")
+      setInviteCodeError(true);
+      throw new Error('Invalid invite code');
     }
-  }
+  };
 
   const setUserData = async () => {
-    const document = doc(db, "Challenge", inviteCode);
+    const document = doc(db, 'Challenge', inviteCode);
     await updateDoc(document, {
       name: name,
       email: email,
-      started: true
+      started: true,
     });
-  }
+  };
 
   const anonymusLogin = async () => {
     try {
-      await signInAnonymously(auth)
+      await signInAnonymously(auth);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-
+  };
 
   return (
-    <div className="dark min-h-screen text-text flex justify-center">
-      <div className="max-w-screen-xl m-0 sm:m-10 bg-base shadow sm:rounded-lg flex justify-center flex-1">
-        <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-          <div className="w-auto relative mt-16 lg:mt-0">
-            <div className="logo-blur rounded-full w-36 h-6 absolute bg-teal-500 blur-xl right-32 top-6 opacity-40" />
-            <Image src="/assets/img/logo.svg" width="190" height="46" 
-              alt="logo"
-              className="w-6/12 mx-auto"
+    <div className='flex min-h-screen justify-center text-text dark'>
+      <div className='m-0 flex max-w-screen-xl flex-1 justify-center bg-base shadow sm:m-10 sm:rounded-lg'>
+        <div className='p-6 sm:p-12 lg:w-1/2 xl:w-5/12'>
+          <div className='relative mt-16 w-auto lg:mt-0'>
+            <div className='logo-blur absolute right-32 top-6 h-6 w-36 rounded-full bg-teal-500 opacity-40 blur-xl' />
+            <Image
+              src='/assets/img/logo.svg'
+              width='190'
+              height='46'
+              alt='logo'
+              className='mx-auto w-6/12'
             />
           </div>
-          <div className="mt-12 flex flex-col items-center">
+          <div className='mt-12 flex flex-col items-center'>
             <p>Welcome Applicant</p>
-            <h1 className="text-2xl xl:text-3xl font-extrabold">Start your test here:</h1>
-            <div className="w-full flex-1 mt-8">
-              <div className="mx-auto max-w-xs flex flex-col gap-y-2">
+            <h1 className='text-2xl font-extrabold xl:text-3xl'>
+              Start your test here:
+            </h1>
+            <div className='mt-8 w-full flex-1'>
+              <div className='mx-auto flex max-w-xs flex-col gap-y-2'>
                 <Input
-                  type="email"
+                  type='email'
                   isRequired
-                  label="Email"
-                  placeholder="Enter your email"
-                  color="primary"
-                  variant="bordered"
+                  label='Email'
+                  placeholder='Enter your email'
+                  color='primary'
+                  variant='bordered'
                   isInvalid={emailError}
-                  value={email|| ""}
-                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                  value={email || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEmail(e.target.value)
+                  }
                 />
                 <Input
-                  type="text"
+                  type='text'
                   isRequired
-                  label="name"
-                  placeholder="Enter your name"
-                  color="primary"
-                  variant="bordered"
-                  className="mb-2"
+                  label='name'
+                  placeholder='Enter your name'
+                  color='primary'
+                  variant='bordered'
+                  className='mb-2'
                   isInvalid={nameError}
-                  value={name|| ""}
-                  onChange={(e:React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                  value={name || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setName(e.target.value)
+                  }
                 />
                 <Input
-                  type="text"
+                  type='text'
                   isRequired
-                  label="invite-code"
-                  placeholder="Paste your invite code here...."
-                  color="primary"
-                  variant="bordered"
-                  className="mb-2"
+                  label='invite-code'
+                  placeholder='Paste your invite code here....'
+                  color='primary'
+                  variant='bordered'
+                  className='mb-2'
                   isInvalid={inviteCodeError}
-                  value={inviteCode||""}
+                  value={inviteCode || ''}
                   onChange={(e) => setInviteCode(e.target.value)}
                 />
                 <Button
-                  color="primary"
-                  variant="shadow"
+                  color='primary'
+                  variant='shadow'
                   disabled={loading}
-                  className="scale-100 hover:scale-[102%] h-14"
+                  className='h-14 scale-100 hover:scale-[102%]'
                   onClick={() => signInCandidate()}
                 >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24'>
                     <path
-                      className="stroke-text"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      className='stroke-text'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
                       strokeWidth={2}
-                      d="M11 6h10m-10 6h10m-10 6h10M3 11.945 4.538 13.5 8 10M3 5.944 4.538 7.5 8 4M4.5 18h.01M5 18a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"
+                      d='M11 6h10m-10 6h10m-10 6h10M3 11.945 4.538 13.5 8 10M3 5.944 4.538 7.5 8 4M4.5 18h.01M5 18a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z'
                     />
                   </svg>
-                  {
-                    loading
-                    ? <span className="ml-2"><Spinner color='white' /></span>
-                    :  <span className="ml-3">Start Test</span>
-                  }
+                  {loading ? (
+                    <span className='ml-2'>
+                      <Spinner color='white' />
+                    </span>
+                  ) : (
+                    <span className='ml-3'>Start Test</span>
+                  )}
                 </Button>
-                {
-                  error && 
-                    <div className="alert border border-[#F31260] p-4 rounded-md mt-2">
-                      <p className="text-[#F31260] text-xs">{error}</p>
-                    </div>
-                }
-                <p className="mt-6 text-xs text-gray-600 text-center">
-                  Are you an Interviewer?{" "}
-                  <Link className="underline" href="/auth/signin">
+                {error && (
+                  <div className='alert mt-2 rounded-md border border-[#F31260] p-4'>
+                    <p className='text-xs text-[#F31260]'>{error}</p>
+                  </div>
+                )}
+                <p className='mt-6 text-center text-xs text-gray-600'>
+                  Are you an Interviewer?{' '}
+                  <Link className='underline' href='/auth/signin'>
                     Sign In
                   </Link>
                 </p>
-                <p className="text-xs text-gray-600 text-center">
-                  By clicking the "Start Test" button you agree to abide by Dexter's{" "}
+                <p className='text-center text-xs text-gray-600'>
+                  By clicking the "Start Test" button you agree to abide by
+                  Dexter's{' '}
                   <a
-                    href="#"
-                    className="border-b border-gray-500 border-dotted"
+                    href='#'
+                    className='border-b border-dotted border-gray-500'
                   >
                     Terms of Service
-                  </a>{" "}
-                  and its{" "}
+                  </a>{' '}
+                  and its{' '}
                   <a
-                    href="#"
-                    className="border-b border-gray-500 border-dotted"
+                    href='#'
+                    className='border-b border-dotted border-gray-500'
                   >
                     Privacy Policy
                   </a>
@@ -224,37 +233,37 @@ export default function page() {
             </div>
           </div>
         </div>
-        <div className="flex-1 bg-neutral text-center hidden lg:flex relative overflow-hidden items-center justify-center">
-          <div className="absolute left-0 w-full h-full bg-gradient-radial from-gray-900/0 to-gray-900/100 z-20" />
-          <div className="square absolute bottom-32 right-32 w-[101px] h-[101px] flex items-center justify-center">
-            <div className="absolute w-[145%] h-[145%] bg-gradient-conic from-transparent from-10% via-red-400 via-50% to-transparent to-50%  delayed-counter-rotation-animation rounded-full" />
-            <div className="absolute bg-gray-900 w-full h-full mx-auto my-auto" />
-            <div className="absolute bg-transparent w-full h-full mx-auto my-auto outline outline-gray-900 outline-offset-1 outline-[90px]" />
+        <div className='relative hidden flex-1 items-center justify-center overflow-hidden bg-neutral text-center lg:flex'>
+          <div className='absolute left-0 z-20 h-full w-full bg-gradient-radial from-gray-900/0 to-gray-900/100' />
+          <div className='square absolute bottom-32 right-32 flex h-[101px] w-[101px] items-center justify-center'>
+            <div className='delayed-counter-rotation-animation absolute h-[145%] w-[145%] rounded-full bg-gradient-conic from-transparent from-10% via-red-400 via-50%  to-transparent to-50%' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-gray-900' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-transparent outline outline-[90px] outline-offset-1 outline-gray-900' />
           </div>
-          <div className="square absolute top-60 left-60 w-[301px] h-[301px] flex items-center justify-center">
-            <div className="absolute w-[150%] h-[150%] bg-gradient-conic from-transparent from-80% via-green-400 via-80% to-transparent rotation-animation rounded-full" />
-            <div className="absolute bg-gray-900 w-full h-full mx-auto my-auto" />
-            <div className="absolute bg-transparent w-full h-full mx-auto my-auto outline outline-gray-900 outline-offset-1 outline-[100px]" />
+          <div className='square absolute left-60 top-60 flex h-[301px] w-[301px] items-center justify-center'>
+            <div className='rotation-animation absolute h-[150%] w-[150%] rounded-full bg-gradient-conic from-transparent from-80% via-green-400 via-80% to-transparent' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-gray-900' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-transparent outline outline-[100px] outline-offset-1 outline-gray-900' />
           </div>
-          <div className="square absolute top-[120px] left-[120px] w-[101px] h-[101px] flex items-center justify-center">
-            <div className="absolute w-[145%] h-[145%] bg-gradient-conic from-transparent from-10% via-blue-400 via-50% to-transparent to-50% counter-rotation-animation rounded-full" />
-            <div className="absolute bg-gray-900 w-full h-full mx-auto my-auto" />
-            <div className="absolute bg-transparent w-full h-full mx-auto my-auto outline outline-gray-900 outline-offset-1 outline-[90px]" />
+          <div className='square absolute left-[120px] top-[120px] flex h-[101px] w-[101px] items-center justify-center'>
+            <div className='counter-rotation-animation absolute h-[145%] w-[145%] rounded-full bg-gradient-conic from-transparent from-10% via-blue-400 via-50% to-transparent to-50%' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-gray-900' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-transparent outline outline-[90px] outline-offset-1 outline-gray-900' />
           </div>
-          <div className="square absolute bottom-[10px] left-0 w-[201px] h-[201px] flex items-center justify-center">
-            <div className="absolute w-[145%] h-[145%] bg-gradient-conic from-transparent from-10% via-yellow-400 via-50% to-transparent to-50% counter-rotation-animation rounded-full" />
-            <div className="absolute bg-gray-900 w-full h-full mx-auto my-auto" />
-            <div className="absolute bg-transparent w-full h-full mx-auto my-auto outline outline-gray-900 outline-offset-1 outline-[90px]" />
+          <div className='square absolute bottom-[10px] left-0 flex h-[201px] w-[201px] items-center justify-center'>
+            <div className='counter-rotation-animation absolute h-[145%] w-[145%] rounded-full bg-gradient-conic from-transparent from-10% via-yellow-400 via-50% to-transparent to-50%' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-gray-900' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-transparent outline outline-[90px] outline-offset-1 outline-gray-900' />
           </div>
-          <div className="square absolute -top-[70px] right-10 w-[151px] h-[151px] flex items-center justify-center">
-            <div className="absolute w-[145%] h-[145%] bg-gradient-conic from-transparent from-10% via-purple-400 via-50% to-transparent to-50% counter-rotation-animation rounded-full" />
-            <div className="absolute bg-gray-900 w-full h-full mx-auto my-auto" />
-            <div className="absolute bg-transparent w-full h-full mx-auto my-auto outline outline-gray-900 outline-offset-1 outline-[90px]" />
+          <div className='square absolute -top-[70px] right-10 flex h-[151px] w-[151px] items-center justify-center'>
+            <div className='counter-rotation-animation absolute h-[145%] w-[145%] rounded-full bg-gradient-conic from-transparent from-10% via-purple-400 via-50% to-transparent to-50%' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-gray-900' />
+            <div className='absolute mx-auto my-auto h-full w-full bg-transparent outline outline-[90px] outline-offset-1 outline-gray-900' />
           </div>
-          <div className="absolute m-0 w-full h-full bg-cover header z-10" />
-          <div className="relative z-20 text-left code-section select-none">
+          <div className='header absolute z-10 m-0 h-full w-full bg-cover' />
+          <div className='code-section relative z-20 select-none text-left'>
             {snippet && (
-              <Code className="whitespace-break-spaces" color="primary">
+              <Code className='whitespace-break-spaces' color='primary'>
                 {snippet}
               </Code>
             )}
@@ -262,5 +271,5 @@ export default function page() {
         </div>
       </div>
     </div>
-  )
+  );
 }

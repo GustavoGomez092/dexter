@@ -4,10 +4,6 @@ import JavaScriptAdvanced from './JavaScript_advanced';
 
 export default {
   category: 'JavaScript',
-  icon: "/assets/img/JavaScript-logo.png",
-  tests: [
-    JavaScriptFundamentals,
-    JavaScriptIntermedium,
-    JavaScriptAdvanced
-  ]
-}
+  icon: '/assets/img/JavaScript-logo.png',
+  tests: [JavaScriptFundamentals, JavaScriptIntermedium, JavaScriptAdvanced],
+};

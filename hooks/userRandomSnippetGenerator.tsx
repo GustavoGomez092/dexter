@@ -1,6 +1,6 @@
 export default function ExportSnippet() {
   const snippets = [
-`
+    `
 // HTTPS Redirect
 
 const httpsRedirect = () => {
@@ -11,7 +11,7 @@ const httpsRedirect = () => {
 // Redirect from http://dexter.com to https://dexter.com
 
 `,
-`
+    `
 // Input value as a Number
 
 const numInput = document.getElementById('num-input');
@@ -24,7 +24,7 @@ num = parseFloat(numInput.value);
 num = numInput.valueAsNumber;
 
 `,
-`
+    `
 // Handle click outside
 
 const onClickOutside = (elementId, callback) => {
@@ -40,7 +40,7 @@ onClickOutside("red-box", () => console.log("Clicked outside red box"));
 document.addEventListener("DOMContentLoaded", onClickOutside);
 
 `,
-`
+    `
 // Handle scroll stop
 
 const onScrollStop = callback => {
@@ -62,7 +62,7 @@ onScrollStop(() => {
 });
 
 `,
-`
+    `
 // Detect if capsLock is on or off
 
 el.addEventListener('keyup', e => {
@@ -72,7 +72,7 @@ el.addEventListener('keyup', e => {
 });
 
 `,
-`
+    `
 // All values inside the array are equal
 const allEqual = arr => arr.every(val => val === arr[0]);
 
@@ -80,7 +80,7 @@ allEqual([1, 2, 3, 4, 5, 6]); // false
 allEqual([1, 1, 1, 1]); // true
 
 `,
-`
+    `
 // Get Average
 const average = (...nums) => {
   nums.reduce((acc, val) => acc + val, 0) / nums.length;
@@ -90,7 +90,7 @@ average(...[1, 2, 3]); // 2
 average(1, 2, 3); // 2
 
 `,
-`
+    `
 // Capitalize
 const capitalize = ([first, ...rest]) =>
 first.toUpperCase() + rest.join('');
@@ -99,13 +99,13 @@ capitalize('fooBar'); // 'FooBar'
 capitalize('fooBar', true); // 'Foobar'
 
 `,
-]
+  ];
   const getRandomSnippet = () => {
-  const randomSnippet = snippets[Math.floor(Math.random() * snippets.length)]
-  return randomSnippet
-  }
+    const randomSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+    return randomSnippet;
+  };
 
   return {
-    getRandomSnippet
-  }
+    getRandomSnippet,
+  };
 }

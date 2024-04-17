@@ -11,8 +11,8 @@ const nextConfig = {
         destination: '/auth/signin',
         permanent: true,
       },
-    ]
+    ];
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
