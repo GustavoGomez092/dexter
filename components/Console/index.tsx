@@ -1,7 +1,6 @@
 import { codeEditorStore } from '@/store/codeEditorStore';
 import './style.css';
-import { useJS } from '@/hooks/useJS';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Victor_Mono } from 'next/font/google';
 import { Chip } from '@nextui-org/react';
 const font = Victor_Mono({ weight: '400', subsets: ['latin'] });
@@ -12,18 +11,6 @@ export default function index() {
   const clearConsoleOutput = codeEditorStore(
     (state) => state.clearConsoleOutput
   );
-
-  const code = codeEditorStore((state) => state.code);
-
-  const { evalJS } = useJS();
-
-  useEffect(() => {
-    const getResult = async () => {
-      const JSresult = await evalJS(code);
-      setResult(JSresult);
-    };
-    getResult();
-  }, [code]);
 
   return (
     <div className='flex h-full gap-4'>
