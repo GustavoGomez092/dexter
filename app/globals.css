@@ -52,3 +52,7 @@ code {
 .markdown-body pre {
   overflow: auto !important;
 }
+
+textarea, input {
+  caret-color: #FFFFFF;
+}

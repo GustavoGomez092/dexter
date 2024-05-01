@@ -1,9 +1,7 @@
 'use client';
 
-import CodeEditor from '@/components/CodeEditor';
 import ChallengePrompter from '@/components/ChallengePrompter';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import Console from '@/components/Console';
 import MultipleChoice from '@/components/MultipleChoice';
 import allTests from '@/tests';
 import {
@@ -12,15 +10,13 @@ import {
   doc,
   getDoc,
   getDocs,
-  limit,
-  orderBy,
-  query,
 } from 'firebase/firestore';
 import db from '@/providers/firebase';
 import { useEffect, useState } from 'react';
 import { Test } from '@/tests/test.type';
 import { challengeStore } from '@/store/challengeStore';
 import OpenQuestion from '@/components/OpenQuestion';
+import SandPackEditor from '@/components/CodeEditor/CustomSandPackEditor';
 
 type AnswerType = {
   id: string | null;
@@ -147,7 +143,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   return (
     <main className='flex h-full flex-col items-center justify-between py-6'>
       <div className='container h-full flex-row gap-2 lg:flex'>
-        <div className='left-area card-border h-full w-full overflow-auto lg:h-[68vh] lg:w-6/12'>
+        <div className='left-area card-border h-full w-full overflow-auto lg:h-[78vh] lg:w-6/12'>
           <PerfectScrollbar>
             <div className='question-area'>
               <ChallengePrompter
@@ -158,18 +154,20 @@ export default function Page({ params }: { params: { slug: string } }) {
             </div>
           </PerfectScrollbar>
         </div>
-        <div className='right-area card-border h-full w-full overflow-auto lg:h-[68vh] lg:w-6/12'>
+        <div className='right-area card-border h-full w-full overflow-auto lg:h-[78vh] lg:w-6/12'>
           {currentAnswer?.data.type === QuestionTypes.CODE && (
             <>
-              <div className='editor-area h-96 overflow-hidden px-6 pt-2 lg:h-4/6'>
-                <CodeEditor
+              <div className='editor-area h-full overflow-hidden px-2 py-2'>
+                <SandPackEditor
                   question={currentAnswer}
                   testId={test?.id || null}
                   invitationId={params.slug}
                 />
-              </div>
-              <div className='console-area h-96 px-6 py-2 lg:h-2/6'>
-                <Console />
+                {/* <CodeEditor
+                  question={currentAnswer}
+                  testId={test?.id || null}
+                  invitationId={params.slug}
+                /> */}
               </div>
             </>
           )}

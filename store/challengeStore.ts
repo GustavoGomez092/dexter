@@ -2,12 +2,16 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
+export type TestType = { status: string; message: string };
+
 export type ChallengeStoreType = {
   challengeInviteId: string;
   currentQuestion: number;
   totalQuestions: number;
   allowNext: boolean;
   complete: boolean;
+  tests: TestType[];
+  setTests: (value: TestType[]) => void;
   setAllowNext: (value: boolean) => void;
   setTotalQuestions: (value: number) => void;
   setCurrentQuestion: (value: number) => void;
@@ -24,6 +28,8 @@ export const challengeStore = create<ChallengeStoreType>()(
         totalQuestions: 0,
         allowNext: false,
         complete: false,
+        tests: [],
+        setTests: (value: TestType[]) => set({ tests: value }),
         setAllowNext: (value: boolean) => set({ allowNext: value }),
         setTotalQuestions: (value: number) => set({ totalQuestions: value }),
         setCurrentQuestion: (value: number) => set({ currentQuestion: value }),

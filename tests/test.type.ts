@@ -1,3 +1,13 @@
+export type Code = {
+  [key: string]: sandPackOptions;
+};
+
+type sandPackOptions = {
+  code: string;
+  active?: boolean;
+  hidden?: boolean;
+}
+
 type QuestionOption = {
   text: string;
   correct: boolean;
@@ -7,27 +17,24 @@ type MultipleChoiceQuestion = {
   type: 'multipleChoice';
   text: string;
   options: QuestionOption[];
-  code?: string;
+  mainFile?: string|'';
+  code?: Code;
 };
 
 type OpenQuestion = {
   type: 'openQuestion';
   text: string;
-  code?: string;
-};
-
-type TestCase = {
-  function: string;
-  input: string;
-  output: string;
+  code?: Code;
+  mainFile?: string|'';
 };
 
 type CodeQuestion = {
   type: 'code';
   text: string;
-  language: string;
-  testCases: TestCase[];
-  code?: string;
+  sandpackType: string;
+  mainFile: string|'';
+  filesToShow: string[];
+  code: Code;
 };
 
 type Question = {

@@ -5,7 +5,7 @@ import { DocumentData, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import db from '@/providers/firebase';
 import { codeToHtml } from 'shiki';
 import 'github-markdown-css';
-import { TestResultsType } from '../CodeEditor';
+import { TestType } from '@/store/challengeStore';
 
 export enum Correct {
   YES = 'yes',
@@ -54,6 +54,7 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
       doc(db, 'Challenge', challengeId, 'Answers', questionId),
       (doc: DocumentData) => {
         const collectionData = doc.data();
+        console.log('setting answer', collectionData);
         setAnswer(collectionData);
       }
     );
@@ -80,6 +81,7 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
   };
 
   const generateUserCode = async (code: string) => {
+    console.log('running code generator');
     const highlightedCode = await codeToHtml(`${code}`, {
       lang: 'javascript',
       theme: 'github-dark-default',
@@ -89,13 +91,15 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
 
   useEffect(() => {
     if (!question) return;
-    if (question.question.code) generateCodeSnippet(question?.question?.code);
+    if (!question?.question?.mainFile) return;
+    if (question.question.code)
+      generateCodeSnippet(
+        question?.question?.code[question?.question?.mainFile].code
+      );
   }, [question]);
 
   useEffect(() => {
-    if (!Array.isArray(answer?.answer)) return;
-    if (testCode) return;
-    generateUserCode(answer?.answer[0].code);
+    generateUserCode(answer?.answer?.code);
   }, [answer]);
 
   return (
@@ -144,25 +148,28 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
             </div>
           )}
         </div>
-        <p className='mb-2 w-full lg:w-10/12'>
+        <div className='mb-2 w-full lg:w-10/12'>
           <span className='mr-2 font-bold'>ANSWER:</span>
           {answer?.answer && typeof answer?.answer !== 'string' ? (
             <>
               <div className='markdown-body !mb-4 !mt-4 rounded-3xl'>
                 <pre>
-                  <code
+                  <div
                     className='highlight highlight-source-js'
+                    key={Math.random()}
                     dangerouslySetInnerHTML={{ __html: testCode }}
-                  ></code>
+                  ></div>
                 </pre>
               </div>
               <div className='ml-2 flex flex-row gap-6'>
-                {answer?.answer.map((x: TestResultsType, indx: number) => (
-                  <div className='flex flex-col gap-1'>
+                {answer?.answer.tests.map((x: TestType, indx: number) => (
+                  <div
+                    className='flex flex-col gap-1'
+                    key={`test-result-${indx}`}
+                  >
                     <p className='font-bold'>Test {indx + 1}</p>
-                    <p>Input: {x.input}</p>
-                    <p>Output: {x.output}</p>
-                    <p>Passed: {x.passed}</p>
+                    <p>{x.status}</p>
+                    <p>{x.status !== 'pass' && x.message}</p>
                   </div>
                 ))}
               </div>
@@ -170,7 +177,7 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
           ) : (
             answer?.answer
           )}
-        </p>
+        </div>
       </CardBody>
     </Card>
   );

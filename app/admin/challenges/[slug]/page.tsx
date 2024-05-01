@@ -10,10 +10,11 @@ import {
   onSnapshot,
   query,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import allTests from '@/tests';
-import { Chip, Snippet, Button } from '@nextui-org/react';
+import { Chip, Snippet, Button, Textarea } from '@nextui-org/react';
 import AdminQuestion from '@/components/AdminQuestion';
 import { challengeStore } from '@/store/challengeStore';
 import { useRouter } from 'next/navigation';
@@ -106,6 +107,13 @@ export default function Page({ params }: { params: { slug: string } }) {
   const backToChallenges = () => {
     setInviteId('');
     router.push('/admin/challenges');
+  };
+
+  const updateComments = async (e: any) => {
+    if (!challengeId) return;
+    await updateDoc(doc(db, 'Challenge', challengeId), {
+      comments: e.target.value,
+    });
   };
 
   return (
@@ -217,6 +225,16 @@ export default function Page({ params }: { params: { slug: string } }) {
                     {answers.filter((a) => a.data.correct === 'check').length}
                   </p>
                 </div>
+                <h3 className='text-bold mb-2 mt-6 text-lg text-text'>
+                  Comments
+                </h3>
+                <Textarea
+                  labelPlacement='outside'
+                  onChange={(e) => updateComments(e)}
+                  placeholder="Add comments about the participant's performance here..."
+                  minRows={10}
+                  className='w-full'
+                />
               </div>
             </div>
           </div>
