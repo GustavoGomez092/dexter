@@ -12,12 +12,13 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, EventHandler, use, useEffect, useState } from 'react';
 import allTests from '@/tests';
 import { Chip, Snippet, Button, Textarea } from '@nextui-org/react';
 import AdminQuestion from '@/components/AdminQuestion';
 import { challengeStore } from '@/store/challengeStore';
 import { useRouter } from 'next/navigation';
+import { useDebounce } from '@uidotdev/usehooks';
 
 type ChallengeSummary = {
   email?: string;
@@ -25,6 +26,7 @@ type ChallengeSummary = {
   started?: boolean;
   test?: string;
   testId?: string;
+  comments?: string;
 };
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -39,6 +41,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<DocumentData[]>([]);
   const [challengeData, setChallengeData] = useState<ChallengeSummary>();
+  const [comment, setComment] = useState<string>('');
   const setInviteId = challengeStore((state) => state.setChallengeInviteId);
   const router = useRouter();
 
@@ -109,12 +112,22 @@ export default function Page({ params }: { params: { slug: string } }) {
     router.push('/admin/challenges');
   };
 
-  const updateComments = async (e: any) => {
+  const updateComments = async () => {
     if (!challengeId) return;
     await updateDoc(doc(db, 'Challenge', challengeId), {
-      comments: e.target.value,
+      comments: comment,
     });
   };
+
+  const debouncedComments = useDebounce(comment, 1000);
+
+  const handdleCommentChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value);
+  };
+
+  useEffect(() => {
+    updateComments();
+  }, [debouncedComments]);
 
   return (
     <main className='flex h-full flex-col items-center justify-between py-6'>
@@ -228,13 +241,16 @@ export default function Page({ params }: { params: { slug: string } }) {
                 <h3 className='text-bold mb-2 mt-6 text-lg text-text'>
                   Comments
                 </h3>
-                <Textarea
-                  labelPlacement='outside'
-                  onChange={(e) => updateComments(e)}
-                  placeholder="Add comments about the participant's performance here..."
-                  minRows={10}
-                  className='w-full'
-                />
+                {challengeData?.comments && (
+                  <Textarea
+                    labelPlacement='outside'
+                    defaultValue={challengeData?.comments}
+                    onChange={(e) => handdleCommentChange(e)}
+                    placeholder="Add comments about the participant's performance here..."
+                    minRows={10}
+                    className='w-full'
+                  />
+                )}
               </div>
             </div>
           </div>

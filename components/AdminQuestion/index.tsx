@@ -54,7 +54,6 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
       doc(db, 'Challenge', challengeId, 'Answers', questionId),
       (doc: DocumentData) => {
         const collectionData = doc.data();
-        console.log('setting answer', collectionData);
         setAnswer(collectionData);
       }
     );
@@ -81,7 +80,6 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
   };
 
   const generateUserCode = async (code: string) => {
-    console.log('running code generator');
     const highlightedCode = await codeToHtml(`${code}`, {
       lang: 'javascript',
       theme: 'github-dark-default',

@@ -90,7 +90,6 @@ const SandPackEditor = ({
   };
 
   const submitCode = () => {
-    console.log('the code we are sending: ', code);
     const data = {
       code: code,
       tests: testSuite,
