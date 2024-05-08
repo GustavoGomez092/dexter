@@ -136,6 +136,7 @@ const SandPackEditor = ({
             showOpenInCodeSandbox={false}
             showRefreshButton={false}
             showOpenNewtab={true}
+            showSandpackErrorOverlay={false}
           />
           <SandpackConsole
             style={{ width: '50%', maxHeight: '190px' }}
