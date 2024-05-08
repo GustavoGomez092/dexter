@@ -62,14 +62,15 @@ const SandPackEditor = ({
 
   const checkTests = (tests: { [key: string]: any }): void => {
     const result = findByKey(tests, 'status');
-    const message = findByKey(tests, 'message');
 
     const veredict = result.map((r, i) => {
       return {
         status: r.status,
-        message: message[i]?.message || 'Jest test passed.',
+        description: r.name,
+        message: r.errors[0]?.message || 'Test passed',
       };
     });
+
     setTestSuite(veredict);
   };
 
@@ -83,7 +84,11 @@ const SandPackEditor = ({
     await setDoc(doc(db, 'Challenge', invitationId, 'Answers', question.id), {
       answer: answer,
       question: question?.data?.question?.text,
-      correct: passedAll ? 'yes' : 'no',
+      correct: question?.data?.question?.runTests
+        ? passedAll
+          ? 'yes'
+          : 'no'
+        : 'check',
     });
 
     setAllowNext(true);
@@ -140,7 +145,7 @@ const SandPackEditor = ({
           <SandpackTests
             onComplete={(results) => checkTests(results)}
             hideTestsAndSupressLogs={true}
-            style={{ width: '0' }}
+            style={{ width: '0', opacity: 0, pointerEvents: 'none' }}
           />
         </div>
       </SandpackLayout>

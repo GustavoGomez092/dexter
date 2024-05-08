@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { devtools } from 'zustand/middleware';
 
-export type TestType = { status: string; message: string };
+export type TestType = { status: string; description?:string, message: string };
 
 export type ChallengeStoreType = {
   challengeInviteId: string;

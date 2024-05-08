@@ -9,14 +9,15 @@ import { Code } from '@/tests/test.type';
 export default function ChallengePrompter({
   title,
   prompt,
+  mainFile,
   code,
 }: {
   title: string;
   prompt: string;
+  mainFile: string;
   code: Code;
 }) {
   const [finalCode, setFinalCode] = useState<any>('');
-  const mainFile = 'index.js';
 
   useEffect(() => {
     if (code) {

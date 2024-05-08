@@ -30,6 +30,7 @@ type OpenQuestion = {
 
 type CodeQuestion = {
   type: 'code';
+  runTests: boolean;
   text: string;
   sandpackType: string;
   mainFile: string|'';

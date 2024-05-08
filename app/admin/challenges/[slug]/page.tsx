@@ -42,6 +42,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [answers, setAnswers] = useState<DocumentData[]>([]);
   const [challengeData, setChallengeData] = useState<ChallengeSummary>();
   const [comment, setComment] = useState<string>('');
+  const [commentsLoaded, setCommentsLoaded] = useState<boolean>(false);
   const setInviteId = challengeStore((state) => state.setChallengeInviteId);
   const router = useRouter();
 
@@ -71,7 +72,9 @@ export default function Page({ params }: { params: { slug: string } }) {
     onSnapshot(doc(db, 'Challenge', path), (doc: DocumentData) => {
       const collectionData = doc.data();
       setChallengeData(collectionData);
+      setComment(collectionData?.comments || '');
       setStarted(collectionData.started);
+      setCommentsLoaded(true);
     });
   };
 
@@ -114,6 +117,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   const updateComments = async () => {
     if (!challengeId) return;
+    if (!comment) return;
     await updateDoc(doc(db, 'Challenge', challengeId), {
       comments: comment,
     });
@@ -241,10 +245,10 @@ export default function Page({ params }: { params: { slug: string } }) {
                 <h3 className='text-bold mb-2 mt-6 text-lg text-text'>
                   Comments
                 </h3>
-                {challengeData?.comments && (
+                {commentsLoaded && (
                   <Textarea
                     labelPlacement='outside'
-                    defaultValue={challengeData?.comments}
+                    defaultValue={comment}
                     onChange={(e) => handdleCommentChange(e)}
                     placeholder="Add comments about the participant's performance here..."
                     minRows={10}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody } from '@nextui-org/react';
+import { Card, CardBody, Chip } from '@nextui-org/react';
 import allTests from '@/tests';
 import { DocumentData, doc, onSnapshot, setDoc } from 'firebase/firestore';
 import db from '@/providers/firebase';
@@ -159,15 +159,18 @@ const AdminQuestion = ({ questionId, index, challengeId }: props) => {
                   ></div>
                 </pre>
               </div>
-              <div className='ml-2 flex flex-row gap-6'>
+              <div className='flex flex-row flex-wrap gap-2'>
                 {answer?.answer.tests.map((x: TestType, indx: number) => (
                   <div
-                    className='flex flex-col gap-1'
+                    className='flex w-[49%] flex-col gap-1 bg-secondary p-4'
                     key={`test-result-${indx}`}
                   >
-                    <p className='font-bold'>Test {indx + 1}</p>
-                    <p>{x.status}</p>
-                    <p>{x.status !== 'pass' && x.message}</p>
+                    <p className='font-bold'>Test: {indx + 1}</p>
+                    <p>{x.description}</p>
+                    <Chip color={x.status === 'fail' ? 'danger' : 'success'}>
+                      {x.status}
+                    </Chip>
+                    <p>{x.message}</p>
                   </div>
                 ))}
               </div>

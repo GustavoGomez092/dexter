@@ -110,6 +110,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     if (!test && params.slug) {
       const testGetter = async () => {
         const test = await getTestByInvitationId(params.slug);
+        console.log(test);
         setTest(test);
       };
       testGetter();
@@ -148,6 +149,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             <div className='question-area'>
               <ChallengePrompter
                 title={'Question'}
+                mainFile={currentAnswer?.data.question?.mainFile || ''}
                 code={currentAnswer?.data.question?.code}
                 prompt={currentAnswer?.data?.question?.text}
               />
@@ -163,11 +165,6 @@ export default function Page({ params }: { params: { slug: string } }) {
                   testId={test?.id || null}
                   invitationId={params.slug}
                 />
-                {/* <CodeEditor
-                  question={currentAnswer}
-                  testId={test?.id || null}
-                  invitationId={params.slug}
-                /> */}
               </div>
             </>
           )}
